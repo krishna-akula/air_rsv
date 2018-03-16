@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Bootstrap 101 Template</title>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="css/dashboard.css" rel="stylesheet">
+    <!-- date and time picker -->
+     <!-- Include all compiled plugins (below), or include individual files as needed -->
+     <script src="js/bootstrap.min.js"></script>
+     <script src="./js/holder.min.js"></script>
+
+
+    <!--Font Awesome (added because you use icons in your prepend/append)-->
+    <link rel="stylesheet" href="https://formden.com/static/cdn/font-awesome/4.4.0/css/font-awesome.min.css" />
+
+      <!-- Inline CSS based on choices in "Settings" tab -->
+    <style>.bootstrap-iso .formden_header h2, .bootstrap-iso .formden_header p, .bootstrap-iso form{font-family: Arial, Helvetica, sans-serif; color: black}.bootstrap-iso form button, .bootstrap-iso form button:hover{color: white !important;} .asteriskField{color: red;}</style>
+
+    <!-- Extra JavaScript/CSS added manually in "Settings" tab -->
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    <!-- Include Date Range Picker -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+    <script type="text/javascript" src="js/date_picker.js"></script>
+   <script type='text/javascript'>
+        function addFields(){
+            // Number of inputs to create
+            var number = document.getElementById("intermediate-stops").value;
+            // Container <div> where dynamic content will be placed
+            var container = document.getElementById("stops-container");
+            // Clear previous contents of the container
+            while (container.hasChildNodes()) {
+                container.removeChild(container.lastChild);
+            }
+            for (i=0;i<number;i++){
+              var dummy = '<label for="inputTime" class="sr-only">Intermidiate Port Arrival Time</label>        <input type="time" id="interArrTime '+i+'" class="form-control" placeholder="Intermediate Port Arrival Time  '+i+'" style="height: 50px; width: 300px;" required autofocus>        <label for="inputText" class="sr-only">Intermidiate Port ID</label>        <input type="text" id="destinationId '+i+'" class="form-control" placeholder="Intermidiate Port ID '+i+'" style="height: 50px; width: 300px;" required autofocus>        <label for="inputTime" class="sr-only">Intermidiate Port Departure Time</label>        <input type="time" id="interDepTime '+i+'" class="form-control" placeholder="Intermidiate Port Departure Time '+i+'" style="height: 50px; width: 300px;" required autofocus>        <label for="inputNumber" class="sr-only">Intermidiate Port Day Offset</label>        <input type="number" id="interdayOffset '+i+'" class="form-control" placeholder="Intermidiate Port Day Offset '+i+'" style="height: 50px; width: 300px;" required autofocus>';
+              container.innerHTML += dummy;
+            }
+        }
+    </script>
+    
+  
+  </head>
+
+
+
+  
+  <body>
+
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Project name</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Settings</a></li>
+            <li><a href="#">Profile</a></li>
+            <li><a href="#">Help</a></li>
+          </ul>
+          <form class="navbar-form navbar-right">
+            <input type="text" class="form-control" placeholder="Search...">
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
+            <li><a href="#">Reports</a></li>
+            <li><a href="#">Analytics</a></li>
+            <li><a href="#">Export</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="">Nav item</a></li>
+            <li><a href="">Nav item again</a></li>
+            <li><a href="">One more nav</a></li>
+            <li><a href="">Another nav item</a></li>
+            <li><a href="">More navigation</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="">Nav item again</a></li>
+            <li><a href="">One more nav</a></li>
+            <li><a href="">Another nav item</a></li>
+          </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h1 class="page-header">Dashboard</h1> 
+          <h2 class="form-signin-heading">Add Flight</h2>
+         <label for="inputText" class="sr-only">Flight ID</label>
+        <input type="text" id="flightId" class="form-control" placeholder="Flight ID" style="height: 50px; width: 300px;" required autofocus>
+
+        <label for="inputNumber" class="sr-only">Bussiness Class Fare</label>
+        <input type="number" min="0" max="99999" step="0.01" id="bussinessClassFare" class="form-control" placeholder="Bussiness Class Fare" style="height: 50px; width: 300px;" required autofocus>
+
+        <label for="inputNumber" class="sr-only">Economy Class Fare</label>
+        <input type="number" min="0" max="99999" step="0.01" id="economyClassFare" class="form-control" placeholder="Economy Class Fare" style="height: 50px; width: 300px;" required autofocus>
+
+        <label for="inputNumber" class="sr-only">Total No. of Seats</label>
+        <input type="number" id="totalNoSeats" class="form-control" placeholder="Total No. of Seats" style="height: 50px; width: 300px;" required autofocus>
+
+        <label for="inputText" class="sr-only">Airline</label>
+        <input type="text" id="airlineId" class="form-control" placeholder="Air line id" style="height: 50px; width: 300px;" required autofocus>
+
+        <label for="inputText" class="sr-only">Source Port ID</label>
+        <input type="text" id="sourceId" class="form-control" placeholder="Source Port ID" style="height: 50px; width: 300px;" required autofocus>
+
+        <label for="inputTime" class="sr-only">Source Depature Time</label>
+        <input type="time" id="sourceDepTime" class="form-control" placeholder="Source Depature Time" style="height: 50px; width: 300px;" required autofocus>
+
+        <label for="inputText" class="sr-only">Destination Port ID</label>
+        <input type="text" id="destinationId" class="form-control" placeholder="Destination Port ID" style="height: 50px; width: 300px;" required autofocus>
+
+        <label for="inputTime" class="sr-only">Destination Arrival Time</label>
+        <input type="time" id="destinationArrTime" class="form-control" placeholder="Destination Arrival Time" style="height: 50px; width: 300px;" required autofocus>
+
+        <label for="inputNumber" class="sr-only">Destination Day Offset</label>
+        <input type="number" id="dayOffset" class="form-control" placeholder="Destination Day Offset" style="height: 50px; width: 300px;" required autofocus>
+ 
+        <label for="inputNumber" class="sr-only">Number of intermediate stops</label>
+        <input type="number" id="intermediate-stops" class="form-control" placeholder="Number of intermediate stops" style="height: 50px; width: 300px;" required autofocus>
+
+        <a href="#" id="filldetails" onclick="addFields()">Fill Details</a>
+        <div id = "stops-container"></div>
+        <!-- <button class="btn btn-lg btn-primary btn-block" id="filldetails" onclick="addFields()">Fill Details of intermediate stops</button> -->
+        <!-- <div id="stops-container"> </div> -->
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit" style="height: 50px; width: 300px;">Add Flight</button>
+        </div>
+      </div>
+    </div>
+
+  </body>
+
+
+</html>
