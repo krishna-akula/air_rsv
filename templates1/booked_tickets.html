@@ -13,6 +13,13 @@
 
     <!-- Custom styles for this template -->
     <link href="css/dashboard.css" rel="stylesheet">
+     <script type='text/javascript'>
+        function enable_button(){
+            document.getElementById("cancelid").disabled = false;
+            document.getElementById("pnrid").disabled = false;
+            document.getElementById("ratingid").disabled = false;
+        }
+    </script>
   </head>
 
   <body>
@@ -57,13 +64,13 @@
               </li>
 
               <li class="nav-item">
-                <a class="nav-link" href="cancel_ticket.html">
+                <a class="nav-link" href="#">
                   <span data-feather="x-circle"></span>
                   Cancel ticket
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="booked_tickets.html">
+                <a class="nav-link" href="#">
                   <span data-feather="file"></span>
                   Booked tickets
                 </a>
@@ -84,42 +91,78 @@
 
 
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <div class="col-md-12 offset-md-0">
+          <h1 class="page-header">My Booking History</h1>
 
-            <div class="col-md-6 offset-md-3">
-        
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Select</th>
+                  <th>Transaction ID</th>
+                  <th>PNR number</th>
+                  <th>Flight ID</th>
+                  <th>From</th>
+                  <th>To</th>
+                  <th>Date of Journey</th>
+                  <th>Ticket status</th>
+                  <th>Date of Booking</th>
+                  <th>Rating</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>
+                  <label class="myradio">
+                  <input type="radio" name="blankRadio" id="blankRadio1" onclick = "enable_button();" aria-label="..."> 
+                </label></td>
+                  <td>1,001</td>
+                  <td>Lorem</td>
+                  <td>ipsum</td>
+                  <td>dolor</td>
+                  <td>sit</td>
+                </tr>
+                <tr>
+                  <td>
+                  <label class="myradio">
+                  <input type="radio" name="blankRadio" id="blankRadio2" onclick = "enable_button();" aria-label="..."> 
+                </label></td>
+                  <td>1,002</td>
+                  <td>amet</td>
+                  <td>consectetur</td>
+                  <td>adipiscing</td>
+                  <td>elit</td>
+                </tr>
+                <tr>
+                <td>
+                  <label class="myradio">
+                  <input type="radio" name="blankRadio" id="blankRadio3" onclick = "enable_button();" aria-label="..."> 
+                </label></td>
+                  <td>1,003</td>
+                  <td>Integer</td>
+                  <td>nec</td>
+                  <td>odio</td>
+                  <td>Praesent</td>
+                </tr>
+                <tr>
+<td>
+                  <label class="myradio">
+                  <input type="radio" name="blankRadio" id="blankRadio4" onclick = "enable_button();" aria-label="...""> 
+                </label></td>
+                  <td>1,004</td>
+                  <td>libero</td>
+                  <td>Sed</td>
+                  <td>cursus</td>
+                  <td>ante</td>
+                </tr>
+              </tbody>
+            </table>
+            <button class="btn btn-primary " id = "pnrid" name="submit" disabled="disabled" type="submit">Get PNR status </button>
+            <button class="btn btn-primary " id = "cancelid" name="submit" disabled="disabled" type="submit">Cancel Ticket  </button>
+            <button class="btn btn-primary " id = "ratingid" name="submit" disabled="disabled" type="submit">Add/Edit rating</button>
+          </div>
+        </div>
 
-                <!-- form card change password -->
-                <div class="card card-outline-secondary">
-                    <div class="card-header">
-                        <h3 class="mb-0">Change Password</h3>
-                    </div>
-                    <div class="card-body">
-                        <form class="form" role="form" autocomplete="off">
-                            <div class="form-group">
-                                <label for="inputPasswordOld">Current Password</label>
-                                <input type="password" class="form-control" id="inputPasswordOld" required="">
-                            </div>
-                            <div class="form-group">
-                                <label for="inputPasswordNew">New Password</label>
-                                <input type="password" class="form-control" id="inputPasswordNew" required="">
-                                <span class="form-text small text-muted">
-                                        The password must be 8-20 characters, and must <em>not</em> contain spaces.
-                                    </span>
-                            </div>
-                            <div class="form-group">
-                                <label for="inputPasswordNewVerify">Verify</label>
-                                <input type="password" class="form-control" id="inputPasswordNewVerify" required="">
-                                <span class="form-text small text-muted">
-                                        To confirm, type the new password again.
-                                    </span>
-                            </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-success btn-lg float-right">Save</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <!-- /form card change password -->
+                
             </div>
 
         </main>
@@ -143,3 +186,4 @@
 
   </body>
 </html>
+
