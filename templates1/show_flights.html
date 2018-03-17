@@ -14,6 +14,11 @@
     <!-- Custom styles for this template -->
     <link href="css/dashboard.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/gijgo@1.8.2/combined/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+    <script type='text/javascript'>
+        function enable_button(){
+            document.getElementById("bookid").disabled = false;
+        }
+    </script>
     
   </head>
 
@@ -36,13 +41,6 @@
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
           <div class="sidebar-sticky">
             <ul class="nav flex-column">
-
-              <li class="nav-item">
-                <a class="nav-link active" href="">
-                  <span data-feather="home"></span>
-                  Dashbard <span class="sr-only">(current)</span>
-                </a>
-              </li>
 
               <li class="nav-item">
                 <a class="nav-link" href="#">
@@ -130,7 +128,7 @@
 					</tr>
 			      </tbody>
           		  </table>
-            <button class="btn btn-primary " id = "pnrid" name="submit" disabled="disabled" type="submit">Book</button>
+            <button class="btn btn-primary " id = "bookid" name="submit" disabled="disabled" type="submit">Book</button>
           </div>
         </div>
 
