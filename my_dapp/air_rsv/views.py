@@ -25,17 +25,18 @@ def signup(request):
 		lastname = request.POST['lastname']
 		password = request.POST.get('password')
 		usertype = request.POST.get('usertype')
-
+		print usertype
+		phonenumber = request.POST.get('phonenumber')
 		if usertype == 'passenger':
-			user = Passenger(username = username, email = email,firstname=firstname,lastname=lastname)
+			user = Passenger(email = email,firstname=firstname,lastname=lastname, password = password, phonenumber = phonenumber)
 			user.set_password(user.make_password(password))
 			user.save()
-			request.session['type'] = 'customer'
-		elif usertype == 'airline':
-			user = Passenger(username = username, email = email,firstname=firstname,lastname=lastname)
+			request.session['type'] = 'passenger'
+		else: # usertype == 'airline':
+			user = Airline(email = email,firstname=firstname,lastname=lastname, password = password, phonenumber = phonenumber)
 			user.set_password(user.make_password(password))
 			user.save()
-			request.session['type'] = 'restaurant'
+			request.session['type'] = 'airline'
 		return redirect('/admin/')
 	if request.method == 'GET':
 		return render(request,'air_rsv/register.html')
