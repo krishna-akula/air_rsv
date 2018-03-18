@@ -21,7 +21,6 @@ from models import *
 def signup(request):
 	if request.method == 'POST':
 		email = request.POST['email']
-		username = request.POST['username']
 		firstname = request.POST['firstname']
 		lastname = request.POST['lastname']
 		password = request.POST.get('password')
@@ -52,7 +51,7 @@ def signin(request):
 			if passenger.check_password(password):
 				request.session['id'] = email
 				request.session['type'] = 'passenger'
-				return redirect('/')
+				return redirect('/admin/')
 			else:
 				messages.error(request,'Password Incorrect')
 				return redirect('/')
@@ -62,7 +61,7 @@ def signin(request):
 				if airline.check_password(password):
 					request.session['id'] = email
 					request.session['type'] = 'airline'
-					return redirect('/')
+					return redirect('/admin/')
 				else:
 					messages.error(request,'Password Incorrect')
 					return redirect('/')
