@@ -82,3 +82,11 @@ class Flight_instance(models.Model):
 	flight_id = models.ForeignKey(Airport,primary_key = True,on_delete=models.CASCADE)
 	date_of_departure = models.CharField(validators=[date_regex],max_length=10)
 	available_seats = models.CharField(validators=[count_regex],max_length=4)
+
+class Offers(models.Model):
+	offer_regex = RegexValidator(regex=r'^\d+$', message="Enter valid number of seats")
+	date_regex = RegexValidator(regex=r'^\s*(3[01]|[12][0-9]|0?[1-9])\.(1[012]|0?[1-9])\.((?:19|20)\d{2})\s*$', message="Enter valid date")
+	offer_id = models.ForeignKey(Airport,primary_key = True,on_delete=models.CASCADE)
+	startdate = models.CharField(validators=[date_regex],max_length=10)
+	end_date = models.CharField(validators=[date_regex],max_length=10)
+	description = models.CharField(max_length=1000)
