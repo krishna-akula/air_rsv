@@ -74,12 +74,26 @@ class Flight(models.Model):
 	departure_time = models.CharField(validators=[time_regex],max_length=5)
 	arrival_time = models.CharField(validators=[time_regex],max_length=5)
 
+class IntermediateStop(models.Model):
+	time_regex = RegexValidator(regex=r'^[0-2][0-3]:[0-5][0-9]$', message="Enter valid time of format HH:MM 24hour")
+	count1_regex = RegexValidator(regex=r'^\d$', message="Enter valid offset")
+	flight_id = models.ForeignKey(Flight,on_delete=models.CASCADE)
+	stop_id = models.ForeignKey(Airport,on_delete=models.CASCADE)
+	daysoffset = models.CharField(validators=[count1_regex],max_length=1)
+	departure_time = models.CharField(validators=[time_regex],max_length=5)
+	arrival_time = models.CharField(validators=[time_regex],max_length=5)
+	class IntermediateStop_Meta:
+		uniquetogether= ('flight_id', 'stop_id')
+
+
 class Flight_instance(models.Model):
 	count_regex = RegexValidator(regex=r'^\d+$', message="Enter valid number of seats")
 	date_regex = RegexValidator(regex=r'^\s*(3[01]|[12][0-9]|0?[1-9])\.(1[012]|0?[1-9])\.((?:19|20)\d{2})\s*$', message="Enter valid date")
-	flight_id = models.ForeignKey(Airport,primary_key = True,on_delete=models.CASCADE)
+	flight_id = models.ForeignKey(Airport,on_delete=models.CASCADE)
 	date_of_departure = models.CharField(validators=[date_regex],max_length=10)
 	available_seats = models.CharField(validators=[count_regex],max_length=4)
+	class Flight_instance_Meta:
+		uniquetogether= ('flight_id', 'date_of_departure')
 
 class Offers(models.Model):
 	offer_regex = RegexValidator(regex=r'^\d+$', message="Enter valid number of seats")
@@ -87,4 +101,24 @@ class Offers(models.Model):
 	offer_id = models.ForeignKey(Airport,primary_key = True,on_delete=models.CASCADE)
 	startdate = models.CharField(validators=[date_regex],max_length=10)
 	end_date = models.CharField(validators=[date_regex],max_length=10)
-	description = models.CharField(max_length=1000)
+	description = models.TextField(blank=True, null=True)
+
+class ValidOffers(models.Model):
+	passenger_email = models.ForeignKey(Passenger,on_delete=models.CASCADE)
+	offer_id = models.ForeignKey(Offers,on_delete=models.CASCADE)
+	class ValidOffers_Meta:
+		uniquetogether= ('passenger_email', 'offer_id')
+
+class OfferedBy(models.Model):
+	airline_email = models.ForeignKey(Airline,on_delete=models.CASCADE)
+	offer_id = models.ForeignKey(Offers,on_delete=models.CASCADE)
+	class OfferedBy_Meta:
+		uniquetogether= ('airline_email', 'offer_id')
+
+# class Ticket(models.MOdel):
+# 	ticket_regex = RegexValidator(regex=r'^[1-9]\d{9,9}$', message="Ticket id must be entered in the format: '1000000000'. A 10 digit number not starting with 0.")
+# 	fare_regex = RegexValidator(regex=r'^\d+(\.\d{1,2})?$', message="Valid fare must be entered in the format: '5000.05 or 5000'.")
+# 	ticket_id = models.CharField(validators=[ticket_regex],primary_key = True,max_length=10)
+# 	passenger_email = models.ForeignKey(Passenger,primary_key = True,on_delete=models.CASCADE)
+# 	flight_id = models.ForeignKey(Airport,primary_key = True,on_delete=models.CASCADE)
+# 	date_of_departure = models.CharField(primary_key = True,validators=[date_regex],max_length=10)
