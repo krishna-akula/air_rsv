@@ -19,4 +19,5 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^air_rsv/', include('air_rsv.urls')),
+    url(r'^', include('air_rsv.urls')),
 ]

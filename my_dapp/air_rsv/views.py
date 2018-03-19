@@ -16,6 +16,14 @@ from django.core.exceptions import *
 import datetime
 from models import *
 
+def home(request):
+	if 'id' in request.session.keys():
+		if request.session['type'] == 'passenger':
+			return render(request,'air_rsv/user_profile.html')
+		elif request.session['type'] == 'airline':
+			return render(request,'air_rsv/user_profile.html') # TODO
+	else:
+		return render(request,"air_rsv/home.html")
 
 @ensure_csrf_cookie
 def signup(request):
@@ -37,7 +45,8 @@ def signup(request):
 			user.set_password(user.make_password(password))
 			user.save()
 			request.session['type'] = 'airline'
-		return redirect('/admin/')
+		return redirect('/')
+		# return redirect('/admin/')
 	if request.method == 'GET':
 		return render(request,'air_rsv/register.html')
 
@@ -47,28 +56,30 @@ def signin(request):
 	if request.method == 'POST':
 		email = request.POST.get('email')
 		password = request.POST.get('password')
+		print email
+		print password
 		try:
 			passenger = Passenger.objects.get(email=email)
 			if passenger.check_password(password):
 				request.session['id'] = email
 				request.session['type'] = 'passenger'
-				return redirect('/admin/')
+				return redirect('/')
 			else:
 				messages.error(request,'Password Incorrect')
-				return redirect('/')
+				# return redirect('/')
 		except:
 			try:
 				airline = get_object_or_404(Airline, email=email)
 				if airline.check_password(password):
 					request.session['id'] = email
 					request.session['type'] = 'airline'
-					return redirect('/admin/')
+					return redirect('/')
 				else:
 					messages.error(request,'Password Incorrect')
-					return redirect('/')
+					# return redirect('/')
 			except:
 				messages.error(request,'No Passenger or Airline is registered with this email')
-				return redirect('/')
+				# return redirect('/')
 
 	elif request.method == 'GET':
 		return render(request,'air_rsv/signin.html')
