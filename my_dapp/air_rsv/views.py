@@ -16,10 +16,26 @@ from django.core.exceptions import *
 import datetime
 from models import *
 
+@ensure_csrf_cookie
+def change_password(request):
+	if 'id' in request.session.keys():
+		if request.session['type'] == 'passenger':
+			print request.session['id']
+			passenger = Passenger.objects.get(email = request.session['id'])
+			context = {'passenger_ob' : passenger}
+			return render(request,'air_rsv/user_profile.html', context)
+		elif request.session['type'] == 'airline':
+			return render(request,'air_rsv/user_profile.html') # TODO
+	else:
+		return render(request,"air_rsv/home.html")
+
 def home(request):
 	if 'id' in request.session.keys():
 		if request.session['type'] == 'passenger':
-			return render(request,'air_rsv/user_profile.html')
+			print request.session['id']
+			passenger = Passenger.objects.get(email = request.session['id'])
+			context = {'passenger_ob' : passenger}
+			return render(request,'air_rsv/user_profile.html', context)
 		elif request.session['type'] == 'airline':
 			return render(request,'air_rsv/user_profile.html') # TODO
 	else:
@@ -56,8 +72,6 @@ def signin(request):
 	if request.method == 'POST':
 		email = request.POST.get('email')
 		password = request.POST.get('password')
-		print email
-		print password
 		try:
 			passenger = Passenger.objects.get(email=email)
 			if passenger.check_password(password):
@@ -83,3 +97,13 @@ def signin(request):
 
 	elif request.method == 'GET':
 		return render(request,'air_rsv/signin.html')
+
+def logout(request):
+	try:
+		del request.session['id']
+		del request.session['type']
+		request.session.modified = True
+	except KeyError:
+		pass
+	return render(request, 'air_rsv/home.html')
+
