@@ -14,6 +14,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib import messages
 from django.core.exceptions import *
 import datetime
+from django.core.exceptions import ValidationError
 from models import *
 
 @ensure_csrf_cookie
@@ -72,7 +73,13 @@ def signup(request):
         if usertype == 'passenger':
             user = Passenger(email = email,firstname=firstname,lastname=lastname, password = password, phonenumber = phonenumber)
             user.set_password(user.make_password(password))
-            user.save()
+            try:
+                user.phone_regex(user.phonenumber)
+                user.save()
+            except Exception:
+                messages.error(request, 'Phone Number Incorrect')
+                return redirect('/register')
+
             request.session['type'] = 'passenger'
             request.session['id'] = email
         elif  usertype == 'airline':

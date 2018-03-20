@@ -42,6 +42,13 @@
         </header>
     
     <form class="form-signin" method="post">
+        {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <div class="alert alert-danger"> <strong><!--{% if message.tags %} class="{{ message.tags }}"{% endif %}>-->{{ message }}</strong></div>
+                    {% endfor %}
+                </ul>
+        {% endif %}
         {% csrf_token %}
       <h1 class="h3 mb-3 font-weight-normal">Please Register here</h1>
 
