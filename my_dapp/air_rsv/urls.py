@@ -12,4 +12,7 @@ urlpatterns = [
     # url(r'^bookticket/?$',views.bookticket, name='bookticket'),
     url(r'^change_password/?$', views.change_password, name='change_password'),
     url(r'^add_flight/?$', views.add_flight, name='add_flight'),
+    url(r'^remove_flight/?$', views.remove_flight, name='remove_flight'),
+    url(r'^flight_data/?$', views.flight_data, name='flight_data'),
+
 ]

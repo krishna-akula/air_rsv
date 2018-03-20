@@ -183,8 +183,47 @@ def logout(request):
 @ensure_csrf_cookie
 def add_flight(request):
     if request.method=="POST":
-
-        return None
+        flightid = request.POST['flightid']
+        business_fare = request.POST['business_fare']
+        economy_fare = request.POST['economy_fare']
+        total_seats = request.POST['total_seats']
+        airline_email = Airline.objects.get(email= request.POST['airline_id'])
+        source_id = Airport.objects.get(airport_id=request.POST['source_id'])
+        source_dep = request.POST['source_dep']
+        destination_id = Airport.objects.get(airport_id=request.POST['destination_id'])
+        destination_arr = request.POST['destination_arr']
+        day_offset = request.POST['day_offset']
+        intermediate_stops = request.POST['intermediate_stops']
+        flight=Flight(flight_id = flightid,	business_classfare = business_fare,economy_classfare = economy_fare,	total_seats =total_seats ,
+	            airline_email = airline_email,	daysoffset = day_offset,sourceid = source_id,	departureid = destination_id ,	departure_time = source_dep,arrival_time = destination_arr)
+        flight.save()
+        key_ar="inter_arrtime"
+        key_dest_id="destination_id"
+        key_inter_dp="inter_deptime"
+        key_id_off="interday_offset"
+        print intermediate_stops,"asdfghj"
+        for i in range(1,int(intermediate_stops)+1):
+            inter_arrtime=request.POST[key_ar+str(i)]
+            destination_id=Airport.objects.get(airport_id=request.POST[key_dest_id+str(i)])
+            inter_deptime=request.POST[key_inter_dp+str(i)]
+            interday_offset=request.POST[key_id_off+str(i)]
+            int_med_stop=IntermediateStop(flight_id = flight,stop_id =destination_id ,daysoffset = interday_offset,	departure_time = inter_deptime,
+                                          arrival_time = inter_arrtime)
+            int_med_stop.save()
+        return redirect('/')
     else:
         return render(request,'air_rsv/flightadd.html')
+
+
+def remove_flight(request):
+    if request.method=="POST":
+        flight=Flight.objects.get(flight_id=request.POST['flight_id'])
+        flight.delete()
+        return redirect('/')
+    else:
+        return render(request,'air_rsv/flightremove.html')
+
+def flight_data(request):
+    flight_obj=Flight
+    return render(request,'air_rsv/flight_data.html',{'flight':flight_obj.objects.all()})
 

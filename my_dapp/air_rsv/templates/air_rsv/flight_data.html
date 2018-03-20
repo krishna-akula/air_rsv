@@ -1,0 +1,53 @@
+{% extends 'base_airline.html' %}
+
+
+{% block body %}
+
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+   <form class="form-bookedtickets">
+      <div class="col-md-12 offset-md-0">
+         <h1 class="page-header">All FLight Data</h1>
+         <div class="table-responsive">
+            <table class="table table-striped">
+               <thead>
+                  <tr>
+                     <!--
+                        <th>Select</th> -->
+                     <th>Flight ID</th>
+                     <th>Bussiness Class Fare</th>
+                     <th>Economy Class Fare</th>
+                     <th>From</th>
+                     <th>To</th>
+                     <th>Total No of Seats</th>
+                     <th>Departure Time</th>
+                     <th>Arrival Time</th>
+                     <th>Destination Day Offset</th>
+{#                     <th>No of Intermediate Stops</th>#}
+                  </tr>
+               </thead>
+               <tbody>
+               {% for obj in flight %}
+                  <tr>
+                     <td>{{ obj.flight_id }}</td>
+                     <td>{{ obj.business_classfare }}</td>
+                     <td>{{ obj.economy_classfare }}</td>
+                     <td>{{ obj.sourceid.airport_name }}</td>
+                     <td>{{ obj.departureid.airport_name}}</td>
+                     <td>{{ obj.total_seats }}</td>
+                     <td>{{ obj.departure_time }}</td>
+                     <td>{{ obj.arrival_time }}</td>
+                     <td>{{ obj.daysoffset }}</td>
+{#                     <td>{{ obj. }}</td>#}
+                  </tr>
+               {% endfor %}
+
+
+               </tbody>
+            </table>
+         </div>
+      </div>
+
+   </form>
+</main>
+
+{% endblock %}

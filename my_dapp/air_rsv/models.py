@@ -51,7 +51,7 @@ class Airline(models.Model):
 		self.password = password
 
 class Airport(models.Model):
-	airport_regex = RegexValidator(regex=r'^[1-9]\d{4,4}$', message="Flight id must be entered in the format: '100000'. A 5 digit number not starting with 0.")
+	airport_regex = RegexValidator(regex=r'^[1-9]\d{4,4}$', message="Flight id must be entered in the format: '10000'. A 5 digit number not starting with 0.")
 	airport_id = models.CharField(validators=[airport_regex],primary_key = True,max_length=5)
 	airport_name = models.CharField(max_length=20)
 	airport_country = models.CharField(max_length=20)
