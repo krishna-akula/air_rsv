@@ -50,7 +50,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="{% url "air_rsv:add_flight" %}">
                   <span data-feather="file"></span>
                   Add flight
                 </a>
@@ -63,7 +63,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="{% url "air_rsv:change_password" %}">
                   <span data-feather="edit"></span>
                   change password
                 </a>
@@ -94,6 +94,8 @@
     <script>
         feather.replace()
     </script>
+
+
 
   </body>
 </html>

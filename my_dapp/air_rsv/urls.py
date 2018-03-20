@@ -11,4 +11,5 @@ urlpatterns = [
     url(r'^logout/?$',views.logout, name='logout'),
     # url(r'^bookticket/?$',views.bookticket, name='bookticket'),
     url(r'^change_password/?$', views.change_password, name='change_password'),
+    url(r'^add_flight/?$', views.add_flight, name='add_flight'),
 ]

@@ -62,14 +62,13 @@ def change_password(request):
             return redirect('/')
     else:
         if request.session['type'] == 'passenger':
-            return render(request,"air_rsv/change_password_user.html")
+            return render(request,"air_rsv/change_password_user.html",{'base':'base_user.html'})
         else :
-            return render(request,"air_rsv/change_password_airline.html")
+            return render(request,"air_rsv/change_password_user.html",{'base':'base_airline.html'})
 
 def home(request):
     if 'id' in request.session.keys():
         if request.session['type'] == 'passenger':
-            print request.session['id']
             passenger = Passenger.objects.get(email = request.session['id'])
             context = {'object' : passenger,'base':'base_user.html'}
             return render(request,'air_rsv/user_profile.html', context)
@@ -82,6 +81,16 @@ def home(request):
 
 @ensure_csrf_cookie
 def signup(request):
+    if 'id' in request.session.keys():
+        if request.session['type'] == 'passenger':
+            passenger = Passenger.objects.get(email = request.session['id'])
+            context = {'object' : passenger,'base':'base_user.html'}
+            return render(request,'air_rsv/user_profile.html', context)
+        elif request.session['type'] == 'airline':
+            airline = Airline.objects.get(email=request.session['id'])
+            context = {'object': airline, 'base': 'base_airline.html'}
+            return render(request,'air_rsv/user_profile.html',context)
+
     if request.method == 'POST':
         email = request.POST['email']
         firstname = request.POST['firstname']
@@ -93,6 +102,7 @@ def signup(request):
         if usertype == 'passenger':
             user = Passenger(email = email,firstname=firstname,lastname=lastname, password = password, phonenumber = phonenumber)
             user.set_password(user.make_password(password))
+            # checking the regex
             error = phone_valid(user.phonenumber)
             if error is None:
                 user.save()
@@ -104,7 +114,13 @@ def signup(request):
         elif  usertype == 'airline':
             user = Airline(email = email,firstname=firstname,lastname=lastname, password = password, phonenumber = phonenumber)
             user.set_password(user.make_password(password))
-            user.save()
+            # checking the regexs
+            error = phone_valid(user.phonenumber)
+            if error is None:
+                user.save()
+            else:
+                messages.error(request, error)
+                return redirect('/register')
             request.session['type'] = 'airline'
             request.session['id'] = email
         return redirect('/')
@@ -114,6 +130,17 @@ def signup(request):
 
 @ensure_csrf_cookie
 def signin(request):
+
+    if 'id' in request.session.keys():
+        if request.session['type'] == 'passenger':
+            passenger = Passenger.objects.get(email=request.session['id'])
+            context = {'object': passenger, 'base': 'base_user.html'}
+            return render(request, 'air_rsv/user_profile.html', context)
+        elif request.session['type'] == 'airline':
+            airline = Airline.objects.get(email=request.session['id'])
+            context = {'object': airline, 'base': 'base_airline.html'}
+            return render(request, 'air_rsv/user_profile.html', context)
+
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
@@ -151,4 +178,13 @@ def logout(request):
     except KeyError:
         pass
     return render(request, 'air_rsv/home.html')
+
+
+@ensure_csrf_cookie
+def add_flight(request):
+    if request.method=="POST":
+
+        return None
+    else:
+        return render(request,'air_rsv/flightadd.html')
 

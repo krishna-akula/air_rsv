@@ -42,14 +42,15 @@
 
     <form class="form-signin" method="post">
       {% csrf_token %}
-      <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-         {% if messages %}
-                <ul class="messages">
+        {% if messages %}
+
                     {% for message in messages %}
-                    <div class="alert alert-danger"> <strong><!--{% if message.tags %} class="{{ message.tags }}"{% endif %}>-->{{ message }}</strong></div>
+
+                       <div class="alert alert-primary" role="alert">
+                         <strong><!--{% if message.tags %} class="{{ message.tags }}"{% endif %}>-->{{ message }}</strong>
+                        </div>
                     {% endfor %}
-                </ul>
-            {% endif %}
+        {% endif %}
       <label for="inputEmail" class="sr-only">Email address</label>
       <input type="email" name="email" class="form-control" placeholder="Email address" required autofocus>
       <label for="inputPassword" class="sr-only">Password</label>
