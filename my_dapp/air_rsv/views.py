@@ -17,6 +17,26 @@ import datetime
 from django.core.exceptions import ValidationError
 from models import *
 
+def phone_valid(value):
+    val = RegexValidator(regex=r'^\+?1?\d{9,15}$',
+                                 message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.",
+                                 code='invalid_phonenumber')
+    try :
+        val=val(value)
+        return None
+    except:
+        return "Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."
+
+
+def date_valid(value):
+    val = RegexValidator(regex=r'^\s*(3[01]|[12][0-9]|0?[1-9])\.(1[012]|0?[1-9])\.((?:19|20)\d{2})\s*$',
+                                message="Enter valid date")
+    try:
+        val(value)
+        return None
+    except:
+        return "Enter valid date"
+
 @ensure_csrf_cookie
 def change_password(request):
     if request.method == "POST":
@@ -73,13 +93,12 @@ def signup(request):
         if usertype == 'passenger':
             user = Passenger(email = email,firstname=firstname,lastname=lastname, password = password, phonenumber = phonenumber)
             user.set_password(user.make_password(password))
-            try:
-                user.phone_regex(user.phonenumber)
+            error = phone_valid(user.phonenumber)
+            if error is None:
                 user.save()
-            except Exception:
-                messages.error(request, 'Phone Number Incorrect')
+            else:
+                messages.error(request, error)
                 return redirect('/register')
-
             request.session['type'] = 'passenger'
             request.session['id'] = email
         elif  usertype == 'airline':
