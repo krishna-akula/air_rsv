@@ -224,6 +224,7 @@ def remove_flight(request):
         return render(request,'air_rsv/flightremove.html')
 
 def flight_data(request):
-    flight_obj=Flight
-    return render(request,'air_rsv/flight_data.html',{'flight':flight_obj.objects.all()})
+    airline=Airline.objects.get(email=request.session['id'])
+    flight_obj=Flight.objects.filter(airline_email=airline)
+    return render(request,'air_rsv/flight_data.html',{'flight':flight_obj})
 

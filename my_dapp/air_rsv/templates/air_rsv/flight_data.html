@@ -13,7 +13,7 @@
                   <tr>
                      <!--
                         <th>Select</th> -->
-                     <th>Flight ID</th>
+                     <th>Flight ID {{ flight.count }}</th>
                      <th>Bussiness Class Fare</th>
                      <th>Economy Class Fare</th>
                      <th>From</th>
@@ -28,7 +28,7 @@
                <tbody>
                {% for obj in flight %}
                   <tr>
-                     <td>{{ obj.flight_id }}</td>
+                     <td>{{ obj.flight_id }} </td>
                      <td>{{ obj.business_classfare }}</td>
                      <td>{{ obj.economy_classfare }}</td>
                      <td>{{ obj.sourceid.airport_name }}</td>
