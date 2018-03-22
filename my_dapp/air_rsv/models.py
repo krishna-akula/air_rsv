@@ -99,28 +99,29 @@ class Flight_instance(models.Model):
 class Offers(models.Model):
 	date_regex = RegexValidator(regex=r'^\s*(3[01]|[12][0-9]|0?[1-9])\.(1[012]|0?[1-9])\.((?:19|20)\d{2})\s*$', message="Enter valid date")
 	offer_id = models.CharField(primary_key = True,max_length=10)
+	airline_email = models.ForeignKey(Airline,on_delete=models.CASCADE)
 	startdate = models.CharField(validators=[date_regex],max_length=10)
 	end_date = models.CharField(validators=[date_regex],max_length=10)
 	description = models.TextField(blank=True, null=True)
 
-class ValidOffers(models.Model):
-	passenger_email = models.ForeignKey(Passenger,on_delete=models.CASCADE)
-	offer_id = models.ForeignKey(Offers,on_delete=models.CASCADE)
-	class ValidOffers_Meta:
-		uniquetogether= ('passenger_email', 'offer_id')
+# class ValidOffers(models.Model):
+# 	passenger_email = models.ForeignKey(Passenger,on_delete=models.CASCADE)
+# 	offer_id = models.ForeignKey(Offers,on_delete=models.CASCADE)
+# 	class ValidOffers_Meta:
+# 		uniquetogether= ('passenger_email', 'offer_id')
 
-class OfferedBy(models.Model):
-	airline_email = models.ForeignKey(Airline,on_delete=models.CASCADE)
-	offer_id = models.ForeignKey(Offers,on_delete=models.CASCADE)
-	class OfferedBy_Meta:
-		uniquetogether= ('airline_email', 'offer_id')
+# class OfferedBy(models.Model):
+# 	airline_email = models.ForeignKey(Airline,on_delete=models.CASCADE)
+# 	offer_id = models.ForeignKey(Offers,on_delete=models.CASCADE)
+# 	class OfferedBy_Meta:
+# 		uniquetogether= ('airline_email', 'offer_id')
 
-class AvailableWeekDays(models.Model):
-	flight_id = models.ForeignKey(Flight,on_delete=models.CASCADE)
-	day_regex = RegexValidator(regex=r'^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday$',message="Enter Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday")
-	week_day = models.CharField(validators=[day_regex],max_length=10)
-	class AvailableWeekDays_Meta:
-		uniquetogether= ('flight_id', 'week_day')
+# class AvailableWeekDays(models.Model):
+# 	flight_id = models.ForeignKey(Flight,on_delete=models.CASCADE)
+# 	day_regex = RegexValidator(regex=r'^Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday$',message="Enter Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday")
+# 	week_day = models.CharField(validators=[day_regex],max_length=10)
+# 	class AvailableWeekDays_Meta:
+# 		uniquetogether= ('flight_id', 'week_day')
 
 
 class Ticket(models.Model):
