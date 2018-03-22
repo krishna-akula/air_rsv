@@ -1,0 +1,116 @@
+
+{% extends 'base_airline.html' %}
+
+{% block body %}
+
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+
+    <div class="col-md-6 offset-md-3">
+
+
+        <!-- form card change password -->
+        <div class="card card-outline-secondary">
+            <div class="card-header">
+                <h3 class="mb-0">Add Flight to the DataBase</h3>
+            </div>
+            <div class="card-body">
+                <form class="form" role="form" autocomplete="on" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="inputText">Flight ID</label>
+                        <input type="text" name="flightid" class="form-control" required="">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputNumber">Bussiness Class Fare</label>
+                        <input type="number" min="0" max="99999" step="0.01" name="business_fare" class="form-control" required="">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputNumber">Economy Class Fare</label>
+                        <input type="number" min="0" max="99999" step="0.01" name="economy_fare" class="form-control" required="">
+
+                    </div>
+                    <div class="form-group">
+                        <label for="inputNumber">Total No. of Seats</label>
+                        <input type="number" name="total_seats" class="form-control" style="width: 100px;" required="">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputText">Airline</label>
+                        <input type="text" name="airline_id" class="form-control" required="">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputText">Source Port ID</label>
+                        <input type="text" name="source_id" class="form-control" required="">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputTime">Source Depature Time</label>
+                        <input type="time" name="source_dep" class="form-control" style="width: 130px;" required="">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputText">Destination Port ID</label>
+                        <input type="text" name="destination_id" class="form-control" required="">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputTime">Destination Arrival Time</label>
+                        <input type="time" name="destination_arr" class="form-control" style="width: 130px;" required="">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputNumber">Destination Day Offset</label>
+                        <input type="number" name="day_offset" class="form-control" style="width: 100px;" required="">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputNumber">Number of intermediate stops</label>
+                        <input type="number"  id= "intermediate-stops" name="intermediate_stops" class="form-control" style="width: 100px;" required="">
+                    </div>
+                    <div class="form-group">
+                        <a href="#" id="filldetails" onclick="addFields()">Fill Details</a>
+                        <div id = "stops-container"></div>
+
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success btn-lg float-right">Add Flight</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+</main>
+     <script type='text/javascript'>
+                            function addFields(){
+                                // Number of inputs to create
+                                var number = document.getElementById("intermediate-stops").value;
+                                // Container <div> where dynamic content will be placed
+                                var container = document.getElementById("stops-container");
+                                // Clear previous contents of the container
+                                while (container.hasChildNodes()) {
+                                    container.removeChild(container.lastChild);
+                                }
+                                for (i=0;i<number;i++){
+                                  var dummy = '<div class="form-group">' +
+
+                                      '<label for="inputTime">Intermidiate Port Arrival Time '+(i+1)+' </label>    ' +
+                                        '    <input type="time" name="inter_arrtime'+(i+1)+'" class="form-control" style="width: 130px;" required="">' +
+                                      ' </div> ' +
+                                      '<div class="form-group">' +
+                                      ' <label for="inputText">Intermidiate Port ID '+(i+1)+'</label> ' +
+                                      '       <input type="text" name="destination_id'+(i+1)+'" class="form-control" required=""> ' +
+                                      ' </div>' +
+                                      ' <div class="form-group">   ' +
+                                      ' <label for="inputTime">Intermidiate Port Departure Time '+(i+1)+'</label>        ' +
+                                      '     <input type="time" name="inter_deptime'+(i+1)+'" class="form-control" style="width: 130px;" required="">  ' +
+                                      '  </div> ' +
+                                      '<div class="form-group">     ' +
+                                      ' <label for="inputNumber">Intermidiate Port Day Offset '+(i+1)+'</label>      ' +
+                                      '   <input type="number" name="interday_offset'+(i+1)+'" class="form-control" style="width: 100px;" required="">' +
+                                      '</div>';
+                                  container.innerHTML += dummy;
+                                }
+                            }
+     </script>
+
+
+
+{% endblock %}
+

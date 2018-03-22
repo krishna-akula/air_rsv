@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Dashboard Template for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/dashboard.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Airline reservation system</a>
+      
+      <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+          <a class="nav-link" href="#">
+              <span data-feather="log-out"></span>
+              Sign out
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar-sticky">
+            <ul class="nav flex-column">
+
+
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="home"></span>
+                  home
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="shopping-cart"></span>
+                  Flights Data
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="file"></span>
+                  Add flight
+                </a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="x-circle"></span>
+                  Remove flight
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="edit"></span>
+                  change password
+                </a>
+              </li>
+            </ul>
+            
+            
+          </div>
+        </nav>
+
+
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+
+            <div class="col-md-6 offset-md-3">
+        
+
+                <!-- form card change password -->
+                <div class="card card-outline-secondary">
+                    <div class="card-header">
+                        <h3 class="mb-0">Add Flight to the DataBase</h3>
+                    </div>
+                    <div class="card-body">
+                        <form class="form" role="form" autocomplete="off">
+                            <div class="form-group">
+                                <label for="inputText">Flight ID</label>
+        						<input type="text" id="flightId" class="form-control" required="">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputNumber">Bussiness Class Fare</label>
+        						<input type="number" min="0" max="99999" step="0.01" id="bussinessClassFare" class="form-control" required="">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputNumber">Economy Class Fare</label>
+        						<input type="number" min="0" max="99999" step="0.01" id="economyClassFare" class="form-control" required="">
+
+                            </div> 
+                            <div class="form-group">
+                                <label for="inputNumber">Total No. of Seats</label>
+        						<input type="number" id="totalNoSeats" class="form-control" style="width: 100px;" required="">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputText">Airline</label>
+        						<input type="text" id="airlineId" class="form-control" required="">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputText">Source Port ID</label>
+        						<input type="text" id="sourceId" class="form-control" required="">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputTime">Source Depature Time</label>
+        						<input type="time" id="sourceDepTime" class="form-control" style="width: 130px;" required="">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputText">Destination Port ID</label>
+        						<input type="text" id="destinationId" class="form-control" required="">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputTime">Destination Arrival Time</label>
+        						<input type="time" id="destinationArrTime" class="form-control" style="width: 130px;" required="">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputNumber">Destination Day Offset</label>
+        						<input type="number" id="dayOffset" class="form-control" style="width: 100px;" required="">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputNumber">Number of intermediate stops</label>
+        						<input type="number" id="intermediate-stops" class="form-control" style="width: 100px;" required="">
+                            </div>
+                            <div class="form-group">
+                                <a href="#" id="filldetails" onclick="addFields()">Fill Details</a>
+        						<div id = "stops-container"></div>
+                            </div>                           
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-success btn-lg float-right">Add Flight</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- /form card change password -->
+            </div>
+
+        </main>
+
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script>window.jQuery || document.write('<script src="jsjquery-slim.min.js"><\/script>')</script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+    <script>
+      feather.replace()
+    </script>
+    <script type='text/javascript'>
+        function addFields(){
+            // Number of inputs to create
+            var number = document.getElementById("intermediate-stops").value;
+            // Container <div> where dynamic content will be placed
+            var container = document.getElementById("stops-container");
+            // Clear previous contents of the container
+            while (container.hasChildNodes()) {
+                container.removeChild(container.lastChild);
+            }
+            for (i=0;i<number;i++){
+              var dummy = '<div class="form-group"><label for="inputTime">Intermidiate Port Arrival Time '+(i+1)+'</label>        <input type="time" id="interArrTime '+(i+1)+'" class="form-control" style="width: 130px;" required=""> </div> <div class="form-group"> <label for="inputText">Intermidiate Port ID '+(i+1)+'</label>        <input type="text" id="destinationId '+(i+1)+'" class="form-control" required="">  </div> <div class="form-group">    <label for="inputTime">Intermidiate Port Departure Time '+(i+1)+'</label>        <input type="time" id="interDepTime '+(i+1)+'" class="form-control" style="width: 130px;" required="">    </div> <div class="form-group">    <label for="inputNumber">Intermidiate Port Day Offset '+(i+1)+'</label>        <input type="number" id="interdayOffset '+i+'" class="form-control" style="width: 100px;" required=""></div>';
+              container.innerHTML += dummy;
+            }
+        }
+    </script>
+  </body>
+</html>

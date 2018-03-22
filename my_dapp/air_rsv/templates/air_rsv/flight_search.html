@@ -1,0 +1,70 @@
+{% extends "base_user.html" %}
+{%block body%}
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+
+            <form name="booking-form" method="post">
+              {% csrf_token %}
+                    
+                <div class="container">
+                    <span class="anchor" id="formComplex"></span>
+                            <hr class="my-5">
+                            <h3>Flight Search </h3>
+                    
+                    <div class="row">
+                      <div class="col-5">
+                        <label id="From">From</label>
+                        <input type="text" class="form-control" id="From">
+                      </div>
+                      <div class="col-5">
+                        <label for="exampleFirst">To</label>
+                        <input type="text" class="form-control" id="exampleFirst">
+                      </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-2">
+                          <label for="exampleFirst">Date</label>
+                          <input type="text" class="form-control" id="exampleFirst" placeholder="DD/MM/YYYY">
+                        </div>
+
+                        <div class="col-3">
+                            <label for="exampleFirst">Total seats</label>
+                              <select class="custom-select" id="inputGroupSelect01">
+                                <option select="selected"value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                              </select>
+                        </div>
+
+                        <div class="col-3">
+                            <label for="exampleFirst">class</label>
+                              <select class="custom-select" id="inputGroupSelect02">
+                                <option selected value="economy">Economy</option>
+                                <option value="business">business</option>
+                              </select>
+                        </div>
+                    </div>
+		 
+		     <div class="col-sm-12 pb-3">
+                                    <!-- Button trigger modal -->
+				    <label for="exampleFirst"> </label>
+                                    <button type="button" class="btn btn-lg btn-primary btn-block" data-toggle="modal" data-target="#exampleModal">
+                                            Search
+                                    </button>
+		     </div>
+
+
+                </div>
+                            
+                    
+            </form>
+
+
+		
+
+                
+
+        </main>
+{%endblock%}
