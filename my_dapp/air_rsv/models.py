@@ -102,9 +102,7 @@ class Offers(models.Model):
 	startdate = models.CharField(validators=[date_regex],max_length=10)
 	end_date = models.CharField(validators=[date_regex],max_length=10)
 	description = models.TextField(blank=True, null=True)
-	flight_id = models.ForeignKey(Flight,on_delete=models.CASCADE)
-	class Offers_Meta:
- 		uniquetogether= ('flight_id', 'offer_id')
+	flight_id = models.ForeignKey(Flight,on_delete=models.CASCADE,default=None)
 
 
 # class ValidOffers(models.Model):
