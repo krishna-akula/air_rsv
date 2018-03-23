@@ -30,6 +30,9 @@ class Passenger(models.Model):
 		return self.password == hashed
 	def set_password(self, password):
 		self.password = password
+	@property
+	def name(self):
+		return firstname + " " + lastname
 
 class Airline(models.Model):
     # username = models.CharField(primary_key=True,max_length =50)
@@ -49,6 +52,9 @@ class Airline(models.Model):
 		return self.password == hashed
 	def set_password(self, password):
 		self.password = password
+	@property
+	def name(self):
+		return firstname + " " + lastname
 
 class Airport(models.Model):
 	airport_regex = RegexValidator(regex=r'^[1-9]\d{4,4}$', message="Flight id must be entered in the format: '10000'. A 5 digit number not starting with 0.")
@@ -67,11 +73,13 @@ class Flight(models.Model):
 	flight_id = models.CharField(validators=[flight_regex],primary_key = True,max_length=10)
 	business_classfare = models.CharField(validators=[price_regex],max_length=15)
 	economy_classfare = models.CharField(validators=[price_regex],max_length=15)
-	total_seats = models.CharField(validators=[count_regex],max_length=4)
+	total_bseats = models.CharField(validators=[count_regex],max_length=4)
+	total_eseats = models.CharField(validators=[count_regex],max_length=4)
 	airline_email = models.ForeignKey(Airline,on_delete=models.CASCADE)
 	daysoffset = models.CharField(validators=[count1_regex],max_length=1)
+	num_intermediate_stops = models.CharField(max_length = 2,default="0")
 	sourceid = models.ForeignKey(Airport,on_delete=models.CASCADE, related_name="sourceid")
-	departureid = models.ForeignKey(Airport,on_delete=models.CASCADE, related_name="destinationid")
+	destinationid = models.ForeignKey(Airport,on_delete=models.CASCADE, related_name="destinationid")
 	departure_time = models.CharField(validators=[time_regex],max_length=8)
 	arrival_time = models.CharField(validators=[time_regex],max_length=8)
 
@@ -83,16 +91,17 @@ class IntermediateStop(models.Model):
 	daysoffset = models.CharField(validators=[count1_regex],max_length=1)
 	departure_time = models.CharField(validators=[time_regex],max_length=8)
 	arrival_time = models.CharField(validators=[time_regex],max_length=8)
+	stop_rank = models.IntegerField(default=0)
 	class IntermediateStop_Meta:
 		uniquetogether= ('flight_id', 'stop_id')
-
 
 class Flight_instance(models.Model):
 	count_regex = RegexValidator(regex=r'^\d+$', message="Enter valid number of seats")
 	date_regex = RegexValidator(regex=r'^\s*(3[01]|[12][0-9]|0?[1-9])\.(1[012]|0?[1-9])\.((?:19|20)\d{2})\s*$', message="Enter valid date")
 	flight_id = models.ForeignKey(Flight,on_delete=models.CASCADE)
 	date_of_departure = models.CharField(validators=[date_regex],max_length=10)
-	available_seats = models.CharField(validators=[count_regex],max_length=4)
+	available_bseats = models.CharField(validators=[count_regex],max_length=4)
+	available_eseats = models.CharField(validators=[count_regex],max_length=4)
 	class Flight_instance_Meta:
 		uniquetogether= ('flight_id', 'date_of_departure')
 

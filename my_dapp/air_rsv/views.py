@@ -16,6 +16,7 @@ from django.core.exceptions import *
 import datetime
 from django.core.exceptions import ValidationError
 from models import *
+from django.db.models import Q
 
 def phone_valid(value):
     val = RegexValidator(regex=r'^\+?1?\d{9,15}$',
@@ -186,7 +187,8 @@ def add_flight(request):
         flightid = request.POST['flightid']
         business_fare = request.POST['business_fare']
         economy_fare = request.POST['economy_fare']
-        total_seats = request.POST['total_seats']
+        total_bseats = request.POST['total_bseats']
+        total_eseats = request.POST['total_eseats']
         airline_email = Airline.objects.get(email= request.POST['airline_id'])
         source_id = Airport.objects.get(airport_id=request.POST['source_id'])
         source_dep = request.POST['source_dep']
@@ -194,8 +196,8 @@ def add_flight(request):
         destination_arr = request.POST['destination_arr']
         day_offset = request.POST['day_offset']
         intermediate_stops = request.POST['intermediate_stops']
-        flight=Flight(flight_id = flightid,	business_classfare = business_fare,economy_classfare = economy_fare,	total_seats =total_seats ,
-	            airline_email = airline_email,	daysoffset = day_offset,sourceid = source_id,	departureid = destination_id ,	departure_time = source_dep,arrival_time = destination_arr)
+        flight=Flight(flight_id = flightid,	business_classfare = business_fare,num_intermediate_stops = intermediate_stops,economy_classfare = economy_fare,	total_bseats =total_bseats ,total_eseats =total_eseats,
+	            airline_email = airline_email,	daysoffset = day_offset,sourceid = source_id,	destinationid = destination_id ,	departure_time = source_dep,arrival_time = destination_arr)
         flight.save()
         key_ar="inter_arrtime"
         key_dest_id="destination_id"
@@ -208,12 +210,11 @@ def add_flight(request):
             inter_deptime=request.POST[key_inter_dp+str(i)]
             interday_offset=request.POST[key_id_off+str(i)]
             int_med_stop=IntermediateStop(flight_id = flight,stop_id =destination_id ,daysoffset = interday_offset,	departure_time = inter_deptime,
-                                          arrival_time = inter_arrtime)
+                                          arrival_time = inter_arrtime,stop_rank=i)
             int_med_stop.save()
         return redirect('/')
     else:
         return render(request,'air_rsv/flightadd.html')
-
 
 def remove_flight(request):
     if request.method=="POST":
@@ -227,4 +228,55 @@ def flight_data(request):
     airline=Airline.objects.get(email=request.session['id'])
     flight_obj=Flight.objects.filter(airline_email=airline)
     return render(request,'air_rsv/flight_data.html',{'flight':flight_obj})
+
+@ensure_csrf_cookie
+def flight_search(request):
+    if 'id' in request.session.keys() and request.session['type'] == 'passenger':
+        if request.method == 'POST':
+            ffrom = request.POST.get('from')
+            fto = request.POST.get('to')
+            fdate = request.POST.get('date')
+            ftotal_seats = request.POST.get('total_seats')
+            fclass = request.POST.get('class')
+            results_list = []
+            results_from = Airport.objects.filter(Q(airport_name__contains=ffrom) | Q(airport_city__contains=ffrom))
+            results_to = Airport.objects.filter(Q(airport_name__contains=fto) | Q(airport_city__contains=fto))
+            for sid in results_from:
+                for did in results_to:
+                    for flg in Flight.objects.all():
+                        if flg.sourceid.airport_id == sid.airport_id and flg.destinationid.airport_id  == did.airport_id:
+                            results_list.append(flg)
+                        for inter in IntermediateStop.objects.filter(flight_id = flg.flight_id):
+                            if flg.sourceid.airport_id == sid.airport_id and inter.stop_id.airport_id == did.airport_id:
+                                results_list.append(flg)  
+                            if inter.stop_id.airport_id == sid.airport_id and flg.destinationid.airport_id  == did.airport_id:
+                                results_list.append(flg)
+                        for inter1 in IntermediateStop.objects.filter(flight_id = flg.flight_id):
+                            for inter2 in IntermediateStop.objects.filter(flight_id = flg.flight_id):
+                                if inter1.stop_rank < inter2.stop_rank:
+                                    if inter1.stop_id.airport_id == sid.airport_id and inter2.stop_id.airport_id == did.airport_id:
+                                        results_list.append(flg)
+            final_results = []
+            for res in results_list:
+                flgi = Flight_instance.objects.filter(flight_id = res.flight_id, date_of_departure = fdate)
+                if flgi.count() == 0: 
+                    nflgi = Flight_instance(flight_id = Flight.objects.get(flight_id=res.flight_id), date_of_departure = fdate, available_bseats = res.total_bseats, available_eseats = res.total_eseats)
+                    nflgi.save()
+                    flgi0 = nflgi
+                else :
+                    flgi0 = flgi[0]
+
+                if (fclass == "business"):
+                    tmp = flgi0.available_bseats
+                else :
+                    tmp = flgi0.available_eseats
+
+                if (tmp >= ftotal_seats) :
+                    final_results.append((res, Offers.objects.filter(flight_id = flgi0.flight_id))) # start and end time
+            
+            return render(request,'air_rsv/show_flights.html',{'final_results':final_results})
+        if request.method == 'GET': 
+            return render(request,'air_rsv/flight_search.html')
+    else :
+        return redirect('/')
 

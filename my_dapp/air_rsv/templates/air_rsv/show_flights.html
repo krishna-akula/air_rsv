@@ -1,0 +1,47 @@
+{% extends "base_user.html" %}
+{%block body%}
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+   <form name="flight-list-form">
+      <div class="col-md-12 offset-md-0">
+         <h3 class="page-header">Available Flights</h3>
+         <div class="table-responsive">
+          {% if final_results %}
+            <table class="table table-striped">
+               <thead>
+                  <tr>
+                     <th>Select</th>
+                     <th>Airline</th>
+                     <th>Departure Time</th>
+                     <th>Travel Time</th>
+                     <th>Arrival Time</th>
+                     <th>Fare</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  {% for i,j in final_results %}
+                  <tr>
+                     <td>
+                        <label class="myradio">
+                        <input type="radio" name="blankRadio" id="blankRadio1" onclick = "enable_button();" aria-label="..."> 
+                        </label>
+                     </td>
+                     <td>{{i.airline_email.name}}</td>
+                     <td>{{i.departure_time}}</td>
+                     <td>implement</td>
+                     <td>{{i.arrival_time}}</td>
+                     <td>{{i.business_classfare}}</td>
+                  </tr>
+                  {% endfor %}
+               </tbody>
+            </table>
+            <button class="btn btn-primary " id = "bookid" name="submit" disabled="disabled" type="submit">Book</button>
+            {% else %}
+             <p> We regret to inform you that there are no flights available for given query.</p>
+            {% endif %}
+         </div>
+      </div>
+      </div>
+   </form>
+</main>
+
+{%endblock%}
