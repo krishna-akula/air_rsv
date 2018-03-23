@@ -13,6 +13,13 @@
 
     <!-- Custom styles for this template -->
     <link href="css/dashboard.css" rel="stylesheet">
+     <script type='text/javascript'>
+        function enable_button(){
+            document.getElementById("cancelid").disabled = false;
+            document.getElementById("pnrid").disabled = false;
+            document.getElementById("ratingid").disabled = false;
+        }
+    </script>
   </head>
 
   <body>
@@ -34,7 +41,6 @@
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
           <div class="sidebar-sticky">
             <ul class="nav flex-column">
-
 
               <li class="nav-item">
                 <a class="nav-link" href="#">
@@ -64,21 +70,27 @@
               <li class="nav-item">
                 <a class="nav-link" href="#">
                   <span data-feather="edit"></span>
-                  change password
+                  Change Password
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="file"></span>
-                  Add Offer
-                </a>
-              </li>
+                    <a class="nav-link" href="#">
+                      <span data-feather="file"></span>
+                      Add Offer
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">
+                      <span data-feather="edit"></span>
+                      Remove Offer
+                    </a>
+                  </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="edit"></span>
-                  Remove Offer
-                </a>
-              </li>
+                    <a class="nav-link" href="#">
+                      <span data-feather="shopping-cart"></span>
+                      Offers Data
+                    </a>
+                  </li>
             </ul>
             
             
@@ -86,48 +98,48 @@
         </nav>
 
 
-
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+          <form class="form-bookedtickets" method="post">
 
-            <div class="col-md-6 offset-md-3">
-        
+            <div class="col-md-12 offset-md-0">
+          <h1 class="page-header">Offers Data</h1>
 
-                <!-- form card change password -->
-                <div class="card card-outline-secondary">
-                    <div class="card-header">
-                        <h3 class="mb-0">Add Offer to the DataBase</h3>
-                    </div>
-                    <div class="card-body">
-                        <form class="form" role="form" autocomplete="off">
-                            <div class="form-group">
-                                <label for="inputText">Flight ID</label>
-        						<input type="text" id="FlightId" class="form-control" required="">
-                            </div>
-                            <div class="form-group">
-                                <label for="inputText">Offer ID</label>
-        						<input type="text" id="OfferId" class="form-control" required="">
-                            </div>
-                            <div class="form-group">
-                                    <label for="inputDate">Start Date</label>
-                                    <input type="text" class="form-control" id="startDate" required="">
-                            </div>
-                            <div class="form-group">
-                                    <label for="inputDate">End Date</label>
-                                    <input type="text" class="form-control" id="endDate" required="">
-                            </div>
-                            <div class="form-group">
-                                <label for="inputText">Description</label>
-        						<input type="text" id="description" class="form-control" required="">
-                            </div>                        
-                            <div class="form-group">
-                             	<button type="submit" class="btn btn-success btn-lg float-right">Add Offers</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <!-- /form card change password -->
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr><!-- 
+                  <th>Select</th> -->
+                  <th>Offer ID</th>
+                  <th>Flight ID</th>
+                  <th>Start Date</th>
+                  <th>End Date</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <!-- <td>
+                  <label class="myradio">
+                  <input type="radio" name="blankRadio" id="blankRadio2" onclick = "enable_button();" aria-label="..."> 
+                </label></td> -->
+                  <td>1,002</td>
+                  <td>amet</td>
+                  <td>consectetur</td>
+                  <td>adipiscing</td>
+                  <td>elit</td>
+                </tr>
+              </tbody>
+            </table>
+            <!-- <button class="btn btn-primary " id = "pnrid" name="submit" disabled="disabled" type="submit">Get PNR status </button>
+            <button class="btn btn-primary " id = "cancelid" name="submit" disabled="disabled" type="submit">Cancel Ticket  </button>
+            <button class="btn btn-primary " id = "ratingid" name="submit" disabled="disabled" type="submit">Add/Edit rating</button> -->
+          </div>
+        </div>
+
+                
             </div>
 
+      </form>
         </main>
 
       </div>
@@ -146,5 +158,7 @@
     <script>
       feather.replace()
     </script>
+
   </body>
 </html>
+

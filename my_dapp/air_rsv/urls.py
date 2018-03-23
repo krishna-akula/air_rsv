@@ -14,5 +14,8 @@ urlpatterns = [
     url(r'^add_flight/?$', views.add_flight, name='add_flight'),
     url(r'^remove_flight/?$', views.remove_flight, name='remove_flight'),
     url(r'^flight_data/?$', views.flight_data, name='flight_data'),
-
+     url(r'^offeradd/?$', views.offeradd, name='offeradd'),
+    url(r'^offerremove/?$', views.offerremove, name='offerremove'),
+    url(r'^offersdata/?$', views.offersdata, name='offersdata'),
+    url(r'^airportsdata/?$', views.airportsdata, name='airportsdata'),
 ]

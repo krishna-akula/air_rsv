@@ -1,0 +1,53 @@
+{% extends 'base_airline.html' %}
+
+
+{% block body %}
+
+
+  <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+    <form class="form-bookedtickets">
+
+      <div class="col-md-12 offset-md-0">
+    <h1 class="page-header">Offers Data</h1>
+
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr><!-- 
+            <th>Select</th> -->
+            <th>Offer ID</th>
+            <th>Flight ID</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for obj in data %}
+            {% if obj %}
+              {% for i in obj %}
+                <tr>
+                  <td>{{ i.offer_id}}</td>
+                  <td>{{i.flight_id}}</td>
+                  <td>{{i.startdate}}</td>
+                  <td>{{i.end_date}}</td>
+                  <td>{{i.description}}</td>
+                </tr>
+              {% endfor %}
+            {% endif %}
+          {% endfor %}
+
+        </tbody>
+      </table>
+  </div>
+  </div>
+
+          
+      </div>
+
+</form>
+  </main>
+
+  {% endblock %}
+
+     

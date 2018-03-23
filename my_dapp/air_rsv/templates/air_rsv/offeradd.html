@@ -1,0 +1,52 @@
+{% extends 'base_airline.html' %}
+{% block body %}
+
+
+
+  <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+
+      <div class="col-md-6 offset-md-3">
+  
+
+          <!-- form card change password -->
+          <div class="card card-outline-secondary">
+              <div class="card-header">
+                  <h3 class="mb-0">Add Offer to the DataBase</h3>
+              </div>
+              <div class="card-body">
+                  <form class="form" role="form" autocomplete="off" method="post">
+                      {% csrf_token %}
+                      <div class="form-group">
+                          <label for="inputText">Flight ID</label>
+              <input type="text" name="flightid" class="form-control" required="">
+                      </div>
+                      <div class="form-group">
+                          <label for="inputText">Offer ID</label>
+              <input type="text" name="offerid" class="form-control" required="">
+                      </div>
+                      <div class="form-group">
+                              <label for="inputDate">Start Date</label>
+                              <input type="text" class="form-control" name="startdate" required="">
+                      </div>
+                      <div class="form-group">
+                              <label for="inputDate">End Date</label>
+                              <input type="text" class="form-control" name="enddate" required="">
+                      </div>
+                      <div class="form-group">
+                          <label for="inputText">Description</label>
+              <input type="text" name="description" class="form-control" required="">
+                      </div>                        
+                      <div class="form-group">
+                        <button type="submit" class="btn btn-success btn-lg float-right">Add Offers</button>
+                      </div>
+                  </form>
+              </div>
+          </div>
+          <!-- /form card change password -->
+      </div>
+
+  </main>
+
+  {% endblock %}
+
+      

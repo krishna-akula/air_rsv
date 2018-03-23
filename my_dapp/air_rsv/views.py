@@ -228,3 +228,42 @@ def flight_data(request):
     flight_obj=Flight.objects.filter(airline_email=airline)
     return render(request,'air_rsv/flight_data.html',{'flight':flight_obj})
 
+def offeradd(request):
+    if request.method=="POST":
+        flightid = Flight.objects.get(flight_id=request.POST['flightid'])
+        offerid = request.POST['offerid']
+        startdate = request.POST['startdate']
+        enddate = request.POST['enddate']
+        description = request.POST['description']
+        offer = Offers(offer_id = offerid,	startdate = startdate,	end_date = enddate,	description = description,
+	                        flight_id = flightid)
+        offer.save()
+        return redirect('/')
+    else:
+        return render(request,'air_rsv/offeradd.html')
+
+def offerremove(request):
+    if request.method=="POST":
+        offer=Offers.objects.get(offer_id = request.POST['offerid']) 
+        offer.delete()
+        return redirect('/')
+    else:
+        return render(request,'air_rsv/offerremove.html')
+
+def offersdata(request):
+    if 'id' in request.session.keys():
+        flight=Flight.objects.filter(airline_email=request.session['id'])
+        data=[]
+        for i in flight:
+            data.append(Offers.objects.filter(flight_id=i.flight_id))
+        return render(request,'air_rsv/offersdata.html',{"data":data})
+    else:
+        return redirect('/')
+
+def airportsdata(request):
+    if 'id' in request.session.keys():
+        data = Airport.objects.all()
+        return render(request,'air_rsv/airportsdata.html',{"data":data})        
+    else:
+        return redirect('/')
+
