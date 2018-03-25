@@ -19,4 +19,7 @@ urlpatterns = [
     url(r'^offerremove/?$', views.offerremove, name='offerremove'),
     url(r'^offersdata/?$', views.offersdata, name='offersdata'),
     url(r'^airportsdata/?$', views.airportsdata, name='airportsdata'),
+    url(r'^show_flights/?$', views.show_flights, name='show_flights'),
+    # url(r'^book_conform/?$', views.book_conform, name='book_conform'),
+
 ]

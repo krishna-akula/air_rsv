@@ -230,6 +230,7 @@ def flight_data(request):
     flight_obj=Flight.objects.filter(airline_email=airline)
     return render(request,'air_rsv/flight_data.html',{'flight':flight_obj})
 
+all_results = dict()
 @ensure_csrf_cookie
 def flight_search(request):
     if 'id' in request.session.keys() and request.session['type'] == 'passenger':
@@ -257,8 +258,8 @@ def flight_search(request):
                                 if inter1.stop_rank < inter2.stop_rank:
                                     if inter1.stop_id.airport_id == sid.airport_id and inter2.stop_id.airport_id == did.airport_id:
                                         results_list.append((flg, inter1))
-            final_results = []
             fdate_ob = datetime.strptime(fdate, '%Y-%m-%d').date()
+            final_results = []
             for res, inter_ob in results_list:
                 if (inter_ob == None):
                     dod = fdate_ob
@@ -275,13 +276,16 @@ def flight_search(request):
 
                 if (fclass == "business"):
                     tmp = flgi0.available_bseats
+                    fare = int(ftotal_seats)*int(res.business_classfare)
                 else :
                     tmp = flgi0.available_eseats
-
+                    fare = int(ftotal_seats)*int(res.economy_classfare)
+                print fare
                 if (tmp >= ftotal_seats) :
-                    final_results.append((res, inter_ob, fclass, Offers.objects.filter(flight_id = flgi0.flight_id))) # start and end time
+                    final_results.append((res, inter_ob, fare, fdate, Offers.objects.filter(flight_id = flgi0.flight_id))) # start and end time
             
-            return render(request,'air_rsv/show_flights.html',{'final_results':final_results})
+            all_results[request.session['id']]=final_results
+            return redirect('/show_flights')
         if request.method == 'GET': 
             return render(request,'air_rsv/flight_search.html')
     else :
@@ -325,4 +329,25 @@ def airportsdata(request):
         return render(request,'air_rsv/airportsdata.html',{"data":data})        
     else:
         return redirect('/')
+
+@ensure_csrf_cookie
+def show_flights(request):
+	if request.method=="POST":
+		i = 1
+		final_results=all_results[request.session['id']]
+		for fres in final_results:
+			if request.POST[('rb'+str(i))]==str(i):
+				return render(request,'air_rsv/booking_conform.html')
+			else:
+				i = i + 1
+	else:
+		print all_results
+		return render(request,'air_rsv/show_flights.html',{'final_results':all_results[request.session['id']]})
+
+# @ensure_csrf_cookie
+# def book_conform(request):
+# 	if request.method=="POST":
+# 		pass
+# 	else:
+# 		return render
 

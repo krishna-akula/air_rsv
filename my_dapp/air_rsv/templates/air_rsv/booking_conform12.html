@@ -1,0 +1,65 @@
+
+{% extends base %}
+
+
+{%block body%}
+      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+         <form name="userinfo-form">
+            <div class="col-md-12 offset-md-0">
+            <div class="container">
+               <div class="row">
+                  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xs-offset-0 col-sm-offset-0 col-md-offset-3 col-lg-offset-3 toppad" >
+                     <div class="panel panel-info">
+                        <div class="panel-heading">
+                        {% if object %}
+                           <h3 class="panel-title"> {{object.firstname}}  </h3>
+                        </div>
+                        <div class="panel-body">
+                           <div class="row">
+                              <div class=" col-md-9 col-lg-9 ">
+                                 <table class="table table-user-information">
+                                    <tbody>
+                                       <tr>
+                                          <td>First Name:</td>
+                                          <td>{{object.firstname}}</td>
+                                       </tr>
+                                       <tr>
+                                          <td>Last Name:</td>
+                                          <td>{{object.lastname}}</td>
+                                       </tr>
+                                       <!-- <tr>
+                                          <td>Username:</td>
+                                          <td>krishna-akula</td>
+                                       </tr> -->
+                                       <tr>
+                                       <tr>
+                                          <td>Email:</td>
+                                          <td>{{object.email}}</td>
+                                       </tr>
+                                       <!-- <tr>
+                                          <td>Address</td>
+                                          <td>{{object.address}}</td>
+                                       </tr> -->
+                                       <tr>
+                                          <td>Mobile Number</td>
+                                          <td>{{object.phonenumber}}
+                                          </td>
+                                       </tr>
+                                    </tbody>
+                                 </table>
+                                    </div>
+                                    </div>
+                                    </div>
+                              </div>
+                           </div>
+                        </div>
+                        {% else %}
+                        <p>Error 404. Not found {{passenger_ob}}</p>
+                       {% endif %}
+
+                     </div>
+                  </div>
+         </form>
+      </main>
+
+{%endblock%}
