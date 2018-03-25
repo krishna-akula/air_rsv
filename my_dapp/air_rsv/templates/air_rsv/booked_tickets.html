@@ -1,0 +1,46 @@
+{% extends 'base_user.html' %}
+
+
+{% block body %}
+
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+    <form class="form-bookedtickets" method="post">
+       <div class="col-md-12 offset-md-0">
+          <h1 class="page-header">My Booking History</h1>
+          <div class="table-responsive">
+             <table class="table table-striped">
+                <thead>
+                   <tr>
+                      <th>Ticket ID</th>
+                      <th>Passenger Email</th>
+                      <th>Flight ID</th>
+                      <th>From</th>
+                      <th>To</th>
+                      <th>Date of Journey</th>
+                      <th>Flight Class</th>
+                   </tr>
+                </thead>
+                <tbody>
+                    {% for i in data %}
+                   <tr>
+                      <td>{{i.ticket_id}}</td>
+                      <td>{{i.passenger_email.email}}</td>
+                      <td>{{i.flight_id.flight_id}}</td>
+                      <td>{{i.flight_id.sourceid.airport_city}}</td>
+                      <td>{{i.flight_id.destinationid.airport_city}}</td>
+                      <td>{{i.date_of_departure}}</td>
+                      <td>{{i.flight_class}}</td>
+                   </tr>
+                   {% endfor %}
+                </tbody>
+             </table>
+             <button class="btn btn-primary " id = "pnrid" name="submit" disabled="disabled" type="submit">Get PNR status </button>
+             <button class="btn btn-primary " id = "cancelid" name="submit" disabled="disabled" type="submit">Cancel Ticket  </button>
+             <button class="btn btn-primary " id = "ratingid" name="submit" disabled="disabled" type="submit">Add/Edit rating</button>
+          </div>
+       </div>
+       </div>
+    </form>
+ </main>
+
+ {% endblock %}

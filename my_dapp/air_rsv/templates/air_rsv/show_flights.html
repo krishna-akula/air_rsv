@@ -24,7 +24,7 @@
                   </tr>
                </thead>
                <tbody>
-                  {% for i,j,k,l,m in final_results %}
+                  {% for i,j,k,l,m,n in final_results %}
                   <tr>
                      <td>
                         <label class="myradio">
@@ -38,7 +38,7 @@
                      {% else %}
                         <td>{{j.departure_time}} </td>
                      {% endif %}
-                     <td>{{k}}</td>
+                     <td>{{l}}</td>
                   </tr>
                   {% endfor %}
                </tbody>

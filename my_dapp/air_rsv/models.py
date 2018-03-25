@@ -94,7 +94,7 @@ class IntermediateStop(models.Model):
 	stop_rank = models.IntegerField(default=0)
 	class IntermediateStop_Meta:
 		uniquetogether= ('flight_id', 'stop_id')
-
+	
 class Flight_instance(models.Model):
 	count_regex = RegexValidator(regex=r'^\d+$', message="Enter valid number of seats")
 	# date_regex = RegexValidator(regex=r'^\s*(3[01]|[12][0-9]|0?[1-9])\.(1[012]|0?[1-9])\.((?:19|20)\d{2})\s*$', message="Enter valid date")

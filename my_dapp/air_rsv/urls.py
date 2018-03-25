@@ -20,6 +20,6 @@ urlpatterns = [
     url(r'^offersdata/?$', views.offersdata, name='offersdata'),
     url(r'^airportsdata/?$', views.airportsdata, name='airportsdata'),
     url(r'^show_flights/?$', views.show_flights, name='show_flights'),
-    # url(r'^book_conform/?$', views.book_conform, name='book_conform'),
-
+    url(r'^booking_conform/?$', views.booking_conform, name='booking_conform'),
+    url(r'^booked_tickets/?$', views.booked_tickets, name='booked_tickets'),
 ]

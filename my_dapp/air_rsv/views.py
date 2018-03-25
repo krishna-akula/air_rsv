@@ -19,6 +19,8 @@ from models import *
 from django.db.models import Q
 from datetime import datetime, timedelta
 
+tid = 1000000000
+
 def phone_valid(value):
     val = RegexValidator(regex=r'^\+?1?\d{9,15}$',
                                  message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.",
@@ -38,6 +40,11 @@ def date_valid(value):
         return None
     except:
         return "Enter valid date"
+
+def update_tid(ticket_id):
+    global tid
+    tid = ticket_id
+    
 
 @ensure_csrf_cookie
 def change_password(request):
@@ -282,7 +289,7 @@ def flight_search(request):
                     fare = int(ftotal_seats)*int(res.economy_classfare)
                 print fare
                 if (tmp >= ftotal_seats) :
-                    final_results.append((res, inter_ob, fare, fdate, Offers.objects.filter(flight_id = flgi0.flight_id))) # start and end time
+                    final_results.append((res, inter_ob, fclass,fare, fdate, Offers.objects.filter(flight_id = flgi0.flight_id))) # start and end time
             
             all_results[request.session['id']]=final_results
             return redirect('/show_flights')
@@ -330,24 +337,64 @@ def airportsdata(request):
     else:
         return redirect('/')
 
+f_results = dict()
 @ensure_csrf_cookie
 def show_flights(request):
-	if request.method=="POST":
-		i = 1
-		final_results=all_results[request.session['id']]
-		for fres in final_results:
-			if request.POST[('rb'+str(i))]==str(i):
-				return render(request,'air_rsv/booking_conform.html')
-			else:
-				i = i + 1
-	else:
-		print all_results
-		return render(request,'air_rsv/show_flights.html',{'final_results':all_results[request.session['id']]})
+    final_results=all_results[request.session['id']]
+    if request.method=="POST":
+        i = 1
+        final_results=all_results[request.session['id']]
+        for fres in final_results:
+            if request.POST[('rb'+str(i))]==str(i):
+                f_results[request.session['id']]=final_results[i-1]
+                # return render(request,'air_rsv/booking_conform.html',{"ticket_data":final_results[i-1]})
+                return redirect('/booking_conform')
+            else:
+                i = i + 1
+    else:
+        return render(request,'air_rsv/show_flights.html',{'final_results':final_results})
 
-# @ensure_csrf_cookie
-# def book_conform(request):
-# 	if request.method=="POST":
-# 		pass
-# 	else:
-# 		return render
 
+@ensure_csrf_cookie
+def booking_conform(request):
+    if request.method=="POST":
+        result = f_results[request.session['id']]
+        i = result[0]
+        j = result[1]
+        k = result[2]
+        l = result[3]
+        m = result[4]
+        n = result[5]
+        ticket_id = tid+1
+        update_tid(ticket_id)
+        passenger_email = Passenger.objects.get(email=request.session['id'])
+        flight_id = i
+        date_of_departure = m
+        flight_class = k
+        ticketinstance = Ticket(ticket_id = ticket_id,passenger_email = passenger_email,flight_id = flight_id,date_of_departure = date_of_departure,flight_class = flight_class)
+        ticketinstance.save()
+        flgi = Flight_instance.objects.get(flight_id = i, date_of_departure = m)
+        available_bseats = int(flgi.available_bseats)
+        available_eseats = int(flgi.available_eseats)
+        if(k == "business"):
+            available_bseats = int(flgi.available_bseats) - (int(l)/int(i.business_classfare))
+        else :
+            available_eseats = int(flgi.available_eseats) - (int(l)/int(i.economy_classfare))
+        nflgi = Flight_instance(flight_id = i, date_of_departure = m, available_bseats = str(available_bseats), available_eseats = str(available_eseats))
+        flgi.delete()
+        nflgi.save()
+        f_results.clear()
+        all_results.clear()
+        return redirect('/')
+    else:
+        return render(request,'air_rsv/booking_conform.html',{"ticket_data": f_results[request.session['id']]})
+        
+def booked_tickets(request):
+    if 'id' in request.session.keys():
+        tickets = Ticket.objects.filter(passenger_email = request.session['id'])
+        data = []
+        for t in tickets:
+            data.append(t)
+        return render(request,'air_rsv/booked_tickets.html',{"data":data})
+    else:
+        return redirect('/')
