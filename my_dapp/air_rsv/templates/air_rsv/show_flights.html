@@ -1,7 +1,14 @@
 {% extends "base_user.html" %}
+
+<script type='text/javascript'>
+  function enable_button(){
+      document.getElementById("bookid").disabled = false;
+  }
+</script>
 {%block body%}
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-   <form name="flight-list-form">
+   <form name="flight-list-form" method="post">
+      {%csrf_token%}
       <div class="col-md-12 offset-md-0">
          <h3 class="page-header">Available Flights</h3>
          <div class="table-responsive">
@@ -17,11 +24,11 @@
                   </tr>
                </thead>
                <tbody>
-                  {% for i,j,k,l in final_results %}
+                  {% for i,j,k,l,m in final_results %}
                   <tr>
                      <td>
                         <label class="myradio">
-                        <input type="radio" name="blankRadio" id="blankRadio1" onclick = "enable_button();" aria-label="..."> 
+                        <input type="radio" name= "rb{{forloop.counter}}" value="{{forloop.counter}}" id="blankRadio1" onclick = "enable_book();" aria-label="..."> 
                         </label>
                      </td>
                      <td>{{i.airline_email.name}}</td>
@@ -31,11 +38,7 @@
                      {% else %}
                         <td>{{j.departure_time}} </td>
                      {% endif %}
-                     {% if k == "business" %}
-                        <td>{{i.business_classfare}}</td>
-                     {% else %}
-                        <td>{{i.economy_classfare}} </td>
-                     {% endif %}
+                     <td>{{k}}</td>
                   </tr>
                   {% endfor %}
                </tbody>

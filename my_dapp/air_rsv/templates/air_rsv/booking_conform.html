@@ -1,0 +1,71 @@
+{% extends 'base_airline.html' %}
+
+{% block body %}
+
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+  <form name="booking-form" method="post">
+    <div class="col-md-10 offset-md-1">
+      <span class="anchor" id="formComplex"></span>
+        <hr class="my-5">
+          <h3>Complex Form Example </h3>
+
+<!-- form complex example -->
+          <div class="form-row mt-4">
+              <div class="col-sm-6 pb-3">
+                  <label for="exampleFirst">From</label>
+                  <input type="text" class="form-control" id="exampleFirst">
+              </div>
+              <div class="col-sm-6 pb-3">
+                  <label for="exampleLast">To</label>
+                  <input type="text" class="form-control" id="exampleLast">
+              </div>
+              <div class="col-sm-6 pb-3">
+                  <label for="exampleCity">Date</label>
+                  <input type="text" class="form-control" id="exampleCity">
+              </div>
+
+              
+              <div class="col-sm-3 pb-3">
+                  <label for="exampleZip">No of tickets</label>
+                  <input type="text" class="form-control" id="exampleZip">
+              </div>
+              <div class="col-sm-4 pb-3">
+                      <label for="exampleZip">Offers</label>
+                      <input type="text" class="form-control" id="exampleZip">
+                      <small class="text-info">
+                              please add some offers None for no offers.
+                      </small>
+              </div>
+          </div>
+
+          <div class="col-sm-4 pb-3 ml-auto">
+                  <!-- Button trigger modal -->
+                  <button type="button" class="btn btn-lg btn-primary btn-block" data-toggle="modal" data-target="#exampleModal">
+                          Launch demo modal
+                      </button>
+                  <!-- Modal -->
+                  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                              <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel">Ticket Confirmation</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                              </button>
+                              </div>
+                              <div class="modal-body">
+                                  Please press confirm to book the tickets
+                              </div>
+                              <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                              <button type="button" class="btn btn-primary"typr="submit">Confirm</button>
+                              </div>
+                          </div>
+                          </div>
+                      </div>
+        </div>
+    </div>
+  </form>
+</main>
+
+{% endblock %}

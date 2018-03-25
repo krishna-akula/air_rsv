@@ -11,7 +11,12 @@
       <link href="{% static "air_rsv/css/bootstrap.min.css" %}" rel="stylesheet">
       <!-- Custom styles for this template -->
       <link href="{% static "air_rsv/css/dashboard.css" %}" rel="stylesheet">
-      <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+      <script src="//code.jquery.com/jquery-1.11.1.min.js"></script><script type='text/javascript'>
+        function enable_book(){
+            document.getElementById("bookid").disabled = false;
+        }
+    </script>
+
    </head>
    <body>
       <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
