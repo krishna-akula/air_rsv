@@ -17,6 +17,7 @@ import datetime
 from django.core.exceptions import ValidationError
 from models import *
 from django.db.models import Q
+from datetime import datetime, timedelta
 
 def phone_valid(value):
     val = RegexValidator(regex=r'^\+?1?\d{9,15}$',
@@ -245,22 +246,28 @@ def flight_search(request):
                 for did in results_to:
                     for flg in Flight.objects.all():
                         if flg.sourceid.airport_id == sid.airport_id and flg.destinationid.airport_id  == did.airport_id:
-                            results_list.append(flg)
+                            results_list.append((flg, None))
                         for inter in IntermediateStop.objects.filter(flight_id = flg.flight_id):
                             if flg.sourceid.airport_id == sid.airport_id and inter.stop_id.airport_id == did.airport_id:
-                                results_list.append(flg)  
+                                results_list.append((flg, None))  
                             if inter.stop_id.airport_id == sid.airport_id and flg.destinationid.airport_id  == did.airport_id:
-                                results_list.append(flg)
+                                results_list.append((flg, inter))
                         for inter1 in IntermediateStop.objects.filter(flight_id = flg.flight_id):
                             for inter2 in IntermediateStop.objects.filter(flight_id = flg.flight_id):
                                 if inter1.stop_rank < inter2.stop_rank:
                                     if inter1.stop_id.airport_id == sid.airport_id and inter2.stop_id.airport_id == did.airport_id:
-                                        results_list.append(flg)
+                                        results_list.append((flg, inter1))
             final_results = []
-            for res in results_list:
-                flgi = Flight_instance.objects.filter(flight_id = res.flight_id, date_of_departure = fdate)
+            fdate_ob = datetime.strptime(fdate, '%Y-%m-%d').date()
+            for res, inter_ob in results_list:
+                if (inter_ob == None):
+                    dod = fdate_ob
+                else:
+                    dod = fdate_ob - timedelta(days = (int)(inter_ob.daysoffset))
+                
+                flgi = Flight_instance.objects.filter(flight_id = res.flight_id, date_of_departure = dod)
                 if flgi.count() == 0: 
-                    nflgi = Flight_instance(flight_id = Flight.objects.get(flight_id=res.flight_id), date_of_departure = fdate, available_bseats = res.total_bseats, available_eseats = res.total_eseats)
+                    nflgi = Flight_instance(flight_id = Flight.objects.get(flight_id=res.flight_id), date_of_departure = dod, available_bseats = res.total_bseats, available_eseats = res.total_eseats)
                     nflgi.save()
                     flgi0 = nflgi
                 else :
@@ -272,7 +279,7 @@ def flight_search(request):
                     tmp = flgi0.available_eseats
 
                 if (tmp >= ftotal_seats) :
-                    final_results.append((res, Offers.objects.filter(flight_id = flgi0.flight_id))) # start and end time
+                    final_results.append((res, inter_ob, fclass, Offers.objects.filter(flight_id = flgi0.flight_id))) # start and end time
             
             return render(request,'air_rsv/show_flights.html',{'final_results':final_results})
         if request.method == 'GET': 

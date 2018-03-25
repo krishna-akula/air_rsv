@@ -18,7 +18,8 @@
                      <th>Economy Class Fare</th>
                      <th>From</th>
                      <th>To</th>
-                     <th>Total No of Seats</th>
+                     <th>Total No of Business class Seats</th>
+                     <th>Total No of Economy class Seats</th>
                      <th>Departure Time</th>
                      <th>Arrival Time</th>
                      <th>Destination Day Offset</th>
@@ -32,8 +33,9 @@
                      <td>{{ obj.business_classfare }}</td>
                      <td>{{ obj.economy_classfare }}</td>
                      <td>{{ obj.sourceid.airport_name }}</td>
-                     <td>{{ obj.departureid.airport_name}}</td>
-                     <td>{{ obj.total_seats }}</td>
+                     <td>{{ obj.destinationid.airport_name}}</td>
+                     <td>{{ obj.total_bseats }}</td>
+                     <td>{{ obj.total_eseats }}</td>
                      <td>{{ obj.departure_time }}</td>
                      <td>{{ obj.arrival_time }}</td>
                      <td>{{ obj.daysoffset }}</td>

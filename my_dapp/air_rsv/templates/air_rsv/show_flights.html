@@ -11,14 +11,13 @@
                   <tr>
                      <th>Select</th>
                      <th>Airline</th>
-                     <th>Departure Time</th>
                      <th>Travel Time</th>
-                     <th>Arrival Time</th>
+                     <th>Departure Time</th>
                      <th>Fare</th>
                   </tr>
                </thead>
                <tbody>
-                  {% for i,j in final_results %}
+                  {% for i,j,k,l in final_results %}
                   <tr>
                      <td>
                         <label class="myradio">
@@ -26,10 +25,17 @@
                         </label>
                      </td>
                      <td>{{i.airline_email.name}}</td>
-                     <td>{{i.departure_time}}</td>
                      <td>implement</td>
-                     <td>{{i.arrival_time}}</td>
-                     <td>{{i.business_classfare}}</td>
+                     {% if j == None %}
+                        <td>{{i.departure_time}}</td>
+                     {% else %}
+                        <td>{{j.departure_time}} </td>
+                     {% endif %}
+                     {% if k == "business" %}
+                        <td>{{i.business_classfare}}</td>
+                     {% else %}
+                        <td>{{i.economy_classfare}} </td>
+                     {% endif %}
                   </tr>
                   {% endfor %}
                </tbody>
