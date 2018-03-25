@@ -398,3 +398,12 @@ def booked_tickets(request):
         return render(request,'air_rsv/booked_tickets.html',{"data":data})
     else:
         return redirect('/')
+
+def cancel_ticket(request):
+    if request.method=="POST":
+        ticketinstance=Ticket.objects.get(ticket_id=request.POST['ticket_id'])
+        ticketinstance.delete()
+        # didn't update the available seats in corresponding flight instance 
+        return redirect('/')
+    else:
+        return render(request,'air_rsv/cancel_ticket.html')

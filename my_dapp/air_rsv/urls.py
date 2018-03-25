@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^show_flights/?$', views.show_flights, name='show_flights'),
     url(r'^booking_conform/?$', views.booking_conform, name='booking_conform'),
     url(r'^booked_tickets/?$', views.booked_tickets, name='booked_tickets'),
+    url(r'^cancel_ticket/?$', views.cancel_ticket, name='cancel_ticket'),
 ]
