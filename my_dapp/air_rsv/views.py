@@ -17,11 +17,9 @@ import datetime
 from django.core.exceptions import ValidationError
 from models import *
 from django.db.models import Q
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from django.db import transaction
 import hashlib
-
-tid = 1000000000
 
 def phone_valid(value):
     val = RegexValidator(regex=r'^\+?1?\d{9,15}$',
@@ -55,22 +53,30 @@ def change_password(request):
             passenger = Passenger.objects.get(email = request.session['id'])
             oldpassword = request.POST.get('oldpassword')
             newpassword = request.POST.get('newpassword')
-            if passenger.check_password(oldpassword):
+            newpassword1 = request.POST.get('newpassword1')
+            if passenger.check_password(oldpassword) and newpassword == newpassword1:
                 passenger.set_password(passenger.make_password(newpassword))
                 passenger.save()
-            else:
+                return redirect('/')
+            elif passenger.check_password(oldpassword) == False:
                 messages.error(request,'Old Password Incorrect')
-            return redirect('/')
+            else:
+                messages.error(request, 'Confirmation password mismatch')
+            return redirect('/change_password')
         elif request.session['type'] == 'airline':
             airline = Airline.objects.get(email = request.session['id'])
             oldpassword = request.POST.get('oldpassword')
             newpassword = request.POST.get('newpassword')
-            if airline.check_password(oldpassword):
+            newpassword1 = request.POST.get('newpassword1')
+            if airline.check_password(oldpassword) and newpassword == newpassword1:
                 airline.set_password(airline.make_password(newpassword))
                 airline.save()
-            else:
+                return redirect('/')
+            elif airline.check_password(oldpassword) == False:
                 messages.error(request,'Old Password Incorrect')
-            return redirect('/')
+            else:
+                messages.error(request, 'Confirmation password mismatch')
+            return redirect('/change_password')
     else:
         if request.session['type'] == 'passenger':
             return render(request,"air_rsv/change_password_user.html",{'base':'base_user.html'})
@@ -79,13 +85,14 @@ def change_password(request):
 
 def home(request):
     if 'id' in request.session.keys():
+        data = Airport.objects.all() # change this to relevant airports
         if request.session['type'] == 'passenger':
             passenger = Passenger.objects.get(email = request.session['id'])
-            context = {'object' : passenger,'base':'base_user.html'}
+            context = {'object' : passenger,'base':'base_user.html','data' : data}
             return render(request,'air_rsv/user_profile.html', context)
         elif request.session['type'] == 'airline':
             airline = Airline.objects.get(email=request.session['id'])
-            context = {'object': airline, 'base': 'base_airline.html'}
+            context = {'object': airline, 'base': 'base_airline.html','data' : data}
             return render(request,'air_rsv/user_profile.html',context)
     else:
         return render(request,"air_rsv/home.html")
@@ -108,40 +115,51 @@ def signup(request):
         lastname = request.POST['lastname']
         password = request.POST.get('password')
         usertype = request.POST.get('usertype')
-        print usertype
         phonenumber = request.POST.get('phonenumber')
         if usertype == 'passenger':
-            user = Passenger(email = email,firstname=firstname,lastname=lastname, password = password, phonenumber = phonenumber)
-            user.set_password(user.make_password(password))
-            # checking the regex
-            error = phone_valid(user.phonenumber)
-            if error is None:
-                user.save()
-            else:
-                messages.error(request, error)
-                return redirect('/register')
-            request.session['type'] = 'passenger'
-            request.session['id'] = email
+            try:
+                Passenger.objects.get(email=email)
+                messages.error(request, "Email already exists")
+                return redirect('/register')                
+            except:
+                user = Passenger(email = email,firstname=firstname,lastname=lastname, password = password, phonenumber = phonenumber)
+                user.set_password(user.make_password(password))
+                # checking the regex
+                error = phone_valid(user.phonenumber)
+                if error is None:
+                    user.save()
+                else:
+                    messages.error(request, error)
+                    return redirect('/register')
+                request.session['type'] = 'passenger'
+                request.session['id'] = email
+                return redirect('/')
+
         elif  usertype == 'airline':
-            user = Airline(email = email,firstname=firstname,lastname=lastname, password = password, phonenumber = phonenumber)
-            user.set_password(user.make_password(password))
-            # checking the regexs
-            error = phone_valid(user.phonenumber)
-            if error is None:
-                user.save()
-            else:
-                messages.error(request, error)
-                return redirect('/register')
-            request.session['type'] = 'airline'
-            request.session['id'] = email
-        return redirect('/')
+            try:
+                Airline.objects.get(email=email)
+                messages.error(request, "Email already exists")
+                return redirect('/register')                
+            except:
+                user = Airline(email = email,firstname=firstname,lastname=lastname, password = password, phonenumber = phonenumber)
+                user.set_password(user.make_password(password))
+                # checking the regexs
+                error = phone_valid(user.phonenumber)
+                if error is None:
+                    user.save()
+                else:
+                    messages.error(request, error)
+                    return redirect('/register')
+                request.session['type'] = 'airline'
+                request.session['id'] = email
+                return redirect('/')
+        return redirect('/')        
     if request.method == 'GET':
         return render(request,'air_rsv/register.html')
 
 
 @ensure_csrf_cookie
 def signin(request):
-
     if 'id' in request.session.keys():
         if request.session['type'] == 'passenger':
             passenger = Passenger.objects.get(email=request.session['id'])
@@ -155,18 +173,23 @@ def signin(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
-        try:
-            passenger = Passenger.objects.get(email=email)
-            if passenger.check_password(password):
-                request.session['id'] = email
-                request.session['type'] = 'passenger'
-                return redirect('/')
-            else:
-                messages.error(request,'Password Incorrect')
-                return redirect('/signin')
-        except:
+        usertype = request.POST.get('usertype')
+        if usertype == 'passenger':
             try:
-                airline = get_object_or_404(Airline, email=email)
+                passenger = Passenger.objects.get(email=email)
+                if passenger.check_password(password):
+                    request.session['id'] = email
+                    request.session['type'] = 'passenger'
+                    return redirect('/')
+                else:
+                    messages.error(request,'Password Incorrect')
+                    return redirect('/signin')
+            except:
+                messages.error(request,'No User is registered with this email')
+                return redirect('/signin')
+        elif usertype == 'airline':
+            try:
+                airline = Airline.objects.get(email=email)
                 if airline.check_password(password):
                     request.session['id'] = email
                     request.session['type'] = 'airline'
@@ -175,9 +198,8 @@ def signin(request):
                     messages.error(request,'Password Incorrect')
                     return redirect('/signin')
             except:
-                messages.error(request,'No Passenger or Airline is registered with this email')
+                messages.error(request,'No Airline is registered with this email')
                 return redirect('/signin')
-
     elif request.method == 'GET':
         return render(request,'air_rsv/signin.html')
 
@@ -239,6 +261,11 @@ def flight_data(request):
     flight_obj=Flight.objects.filter(airline_email=airline)
     return render(request,'air_rsv/flight_data.html',{'flight':flight_obj})
 
+def get_tot(td):
+    hr = int(td)
+    mn = int((td - hr) * 60)
+    return str(hr) + " : " + str(mn)
+
 all_results = dict()
 @ensure_csrf_cookie
 def flight_search(request):
@@ -252,29 +279,45 @@ def flight_search(request):
             results_list = []
             results_from = Airport.objects.filter(Q(airport_name__contains=ffrom) | Q(airport_city__contains=ffrom))
             results_to = Airport.objects.filter(Q(airport_name__contains=fto) | Q(airport_city__contains=fto))
+            try:
+                fdate_ob = datetime.strptime(fdate, '%Y-%m-%d').date()
+                if fdate_ob < date.today() :
+                    raise Exception('date error!')
+            except:
+                messages.error(request,'Enter a valid Date')
+                return redirect('/flight_search')
             for sid in results_from:
                 for did in results_to:
                     for flg in Flight.objects.all():
                         if flg.sourceid.airport_id == sid.airport_id and flg.destinationid.airport_id  == did.airport_id:
-                            results_list.append((flg, None))
+                            t1 = datetime.combine(fdate_ob, datetime.strptime(flg.departure_time, '%H:%M').time())
+                            t2 = datetime.combine(fdate_ob + timedelta(days=int(flg.daysoffset)), datetime.strptime(flg.arrival_time, '%H:%M').time())
+                            results_list.append((flg, None, int((t2 - t1).days) * 24 + (t2- t1).seconds/3600.0))
                         for inter in IntermediateStop.objects.filter(flight_id = flg.flight_id):
                             if flg.sourceid.airport_id == sid.airport_id and inter.stop_id.airport_id == did.airport_id:
-                                results_list.append((flg, None))  
+                                t1 = datetime.combine(fdate_ob, datetime.strptime(flg.departure_time, '%H:%M').time())
+                            	t2 = datetime.combine(fdate_ob + timedelta(days=int(inter.daysoffset)), datetime.strptime(inter.arrival_time, '%H:%M').time())
+                                results_list.append((flg, None, int((t2 - t1).days) * 24 + (t2- t1).seconds/3600.0))  
                             if inter.stop_id.airport_id == sid.airport_id and flg.destinationid.airport_id  == did.airport_id:
+                                t1 = datetime.combine(fdate_ob, datetime.strptime(inter.departure_time, '%H:%M').time())
+                            	t2 = datetime.combine(fdate_ob + timedelta(days=int(flg.daysoffset) - int(inter.daysoffset)), datetime.strptime(flg.arrival_time, '%H:%M').time())
+                                results_list.append((flg, None, int((t2 - t1).days) * 24 + (t2- t1).seconds/3600.0))  
                                 results_list.append((flg, inter))
                         for inter1 in IntermediateStop.objects.filter(flight_id = flg.flight_id):
                             for inter2 in IntermediateStop.objects.filter(flight_id = flg.flight_id):
                                 if inter1.stop_rank < inter2.stop_rank:
                                     if inter1.stop_id.airport_id == sid.airport_id and inter2.stop_id.airport_id == did.airport_id:
-                                        results_list.append((flg, inter1))
-            fdate_ob = datetime.strptime(fdate, '%Y-%m-%d').date()
+                                        t1 = datetime.combine(fdate_ob, datetime.strptime(inter1.departure_time, '%H:%M').time())
+                                        t2 = datetime.combine(fdate_ob + timedelta(days=int(inter2.daysoffset) - int(inter1.daysoffset)), datetime.strptime(inter2.arrival_time, '%H:%M').time())
+                                        results_list.append((flg, inter1, int((t2 - t1).days) * 24 + (t2- t1).seconds/3600.0))
+            
+
             final_results = []
-            for res, inter_ob in results_list:
+            for res, inter_ob, tot in results_list:
                 if (inter_ob == None):
                     dod = fdate_ob
                 else:
                     dod = fdate_ob - timedelta(days = (int)(inter_ob.daysoffset))
-                
                 flgi = Flight_instance.objects.filter(flight_id = res.flight_id, date_of_departure = dod)
                 if flgi.count() == 0: 
                     nflgi = Flight_instance(flight_id = Flight.objects.get(flight_id=res.flight_id), date_of_departure = dod, available_bseats = res.total_bseats, available_eseats = res.total_eseats)
@@ -289,14 +332,15 @@ def flight_search(request):
                 else :
                     tmp = flgi0.available_eseats
                     fare = int(ftotal_seats)*int(res.economy_classfare)
-                print fare
                 if (tmp >= ftotal_seats) :
                     try:
                         go = Offers.objects.get(flight_id = flgi0.flight_id)
-                    except Offers.DoesNotExist:
+                        if (not(date.today() <= go.end_date and go.startdate <= date.today())):
+                            raise Exception('Yo')
+                    except:
                         go = None
-                    final_results.append([res, inter_ob, fclass,fare, fdate, ftotal_seats,go]) # start and end time
-            
+                    
+                    final_results.append([res, inter_ob, fclass,fare, fdate, ftotal_seats,go,get_tot(tot)]) # start and end time            
             all_results[request.session['id']]=final_results
             return redirect('/show_flights')
         if request.method == 'GET': 
@@ -360,7 +404,6 @@ def show_flights(request):
     else:
         return render(request,'air_rsv/show_flights.html',{'final_results':final_results})
 
-
 @ensure_csrf_cookie
 @transaction.atomic
 def booking_conform(request):
@@ -397,7 +440,7 @@ def booking_conform(request):
         nflgi.save()
         f_results.clear()
         all_results.clear()
-        return redirect('/')
+        return redirect('/booked_tickets')
     else:
         data = f_results[request.session['id']]
         # update data[3] if offers available

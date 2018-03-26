@@ -11,6 +11,15 @@
       {%csrf_token%}
       <div class="col-md-12 offset-md-0">
          <h3 class="page-header">Available Flights</h3>
+         {% if messages %}
+
+                    {% for message in messages %}
+
+                       <div class="alert alert-primary" role="alert">
+                         <strong><!--{% if message.tags %} class="{{ message.tags }}"{% endif %}>-->{{ message }}</strong>
+                        </div>
+                    {% endfor %}
+        {% endif %}
          <div class="table-responsive">
           {% if final_results %}
             <table class="table table-striped">
@@ -25,7 +34,7 @@
                   </tr>
                </thead>
                <tbody>
-                  {% for i,j,k,l,m,n,p in final_results %}
+                  {% for i,j,k,l,m,n,p,q in final_results %}
                   <tr>
                      <td>
                         <label class="myradio">
@@ -33,14 +42,18 @@
                         </label>
                      </td>
                      <td>{{i.airline_email.name}}</td>
-                     <td>implement</td>
+                     <td>{{q}}</td>
                      {% if j == None %}
                         <td>{{i.departure_time}}</td>
                      {% else %}
                         <td>{{j.departure_time}} </td>
                      {% endif %}
                      <td>{{l}}</td>
-                     <td>{{p.discount}}</td>
+                     {% if p == None %}
+                     <td> No offer </td>
+                     {% else %}
+                     <td>{{p.discount}}%</td>
+                     {%endif%}
                   </tr>
                   {% endfor %}
                </tbody>

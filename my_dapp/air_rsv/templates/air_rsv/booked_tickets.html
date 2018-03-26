@@ -12,24 +12,24 @@
                 <thead>
                    <tr>
                       <th>Ticket ID</th>
-                      <th>Passenger Email</th>
                       <th>Flight ID</th>
                       <th>From</th>
                       <th>To</th>
                       <th>Date of Journey</th>
                       <th>Flight Class</th>
+                      <th>No. of tickets </th>
                    </tr>
                 </thead>
                 <tbody>
                     {% for i in data %}
                    <tr>
                       <td>{{i.ticket_id}}</td>
-                      <td>{{i.passenger_email.email}}</td>
                       <td>{{i.flight_id.flight_id}}</td>
                       <td>{{i.flight_id.sourceid.airport_city}}</td>
                       <td>{{i.flight_id.destinationid.airport_city}}</td>
                       <td>{{i.date_of_departure}}</td>
                       <td>{{i.flight_class}}</td>
+                      <td>{{i.total_seats}}</td>
                    </tr>
                    {% endfor %}
                 </tbody>

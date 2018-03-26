@@ -78,11 +78,11 @@ WSGI_APPLICATION = 'my_dapp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'project1',
-        'USER': 'db_user',
-        'PASSWORD': 'thatissai',
-        'HOST': '127.0.0.1',
-        'PORT': '',
+		'NAME': 'project1',
+		'USER': 'db_user',
+		'PASSWORD': 'thatissai',
+		'HOST': '127.0.0.1',
+		'PORT': '',
     }
 }
 

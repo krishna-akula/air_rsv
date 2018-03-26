@@ -15,6 +15,7 @@
 
     <!-- Custom styles for this template -->
     <link href="{% static "air_rsv/css/signin.css" %}" rel="stylesheet">
+    <link href="{% static "air_rsv/images/favicon.png" %}" rel="shortcut icon">
 
   </head>
 
@@ -40,19 +41,19 @@
             </div>
           </nav>
         </header>
-    
+    <div class="container">
+      
     <form class="form-signin" method="post">
-        {% if messages %}
-
-                    {% for message in messages %}
-
-                       <div class="alert alert-primary" role="alert">
-                         <strong><!--{% if message.tags %} class="{{ message.tags }}"{% endif %}>-->{{ message }}</strong>
-                        </div>
-                    {% endfor %}
-        {% endif %}
+        
         {% csrf_token %}
       <h1 class="h3 mb-3 font-weight-normal">Please Register here</h1>
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong><!--{% if message.tags %} class="{{ message.tags }}"{% endif %}>-->{{ message }}</strong>
+            </div>
+        {% endfor %}
+      {% endif %}
 
       <label  class="sr-only">Email address</label>
       <input  name="email" class="form-control" placeholder="Email address" required autofocus>
@@ -63,7 +64,7 @@
       <label class="sr-only">Last Name</label>
       <input  name="lastname" class="form-control" placeholder="lastName" required autofocus>
 
-  <label class="sr-only">Phone number</label>
+      <label class="sr-only">Phone number</label>
       <input  name="phonenumber" class="form-control" placeholder="phone number" required autofocus>
 
       <label for="inputPassword" class="sr-only">Password</label>
@@ -82,6 +83,7 @@
       <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
       <p class="mt-5 mb-3 text-muted">&copy; 2017-2018</p>
     </form>
+    </div>
 
   </body>
 
