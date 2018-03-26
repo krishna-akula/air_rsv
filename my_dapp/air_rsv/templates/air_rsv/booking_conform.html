@@ -8,7 +8,15 @@
       <span class="anchor" id="formComplex"></span>
         <hr class="my-5">
           <h3>Ticket Details </h3>
-            
+            {% if messages %}
+
+                    {% for message in messages %}
+
+                       <div class="alert alert-primary" role="alert">
+                         <strong><!--{% if message.tags %} class="{{ message.tags }}"{% endif %}>-->{{ message }}</strong>
+                        </div>
+                    {% endfor %}
+        {% endif %}
 <!-- form complex example -->
           <div class="form-row mt-4">
                 {% if ticket_data %}

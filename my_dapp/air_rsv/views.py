@@ -18,6 +18,7 @@ from django.core.exceptions import ValidationError
 from models import *
 from django.db.models import Q
 from datetime import datetime, timedelta
+from django.template import RequestContext
 
 tid = 1000000000
 
@@ -53,22 +54,30 @@ def change_password(request):
             passenger = Passenger.objects.get(email = request.session['id'])
             oldpassword = request.POST.get('oldpassword')
             newpassword = request.POST.get('newpassword')
-            if passenger.check_password(oldpassword):
+            newpassword1 = request.POST.get('newpassword1')
+            if passenger.check_password(oldpassword) and newpassword == newpassword1:
                 passenger.set_password(passenger.make_password(newpassword))
                 passenger.save()
-            else:
+                return redirect('/')
+            elif passenger.check_password(oldpassword) == False:
                 messages.error(request,'Old Password Incorrect')
-            return redirect('/')
+            else:
+                messages.error(request, 'Confirmation password mismatch')
+            return redirect('/change_password')
         elif request.session['type'] == 'airline':
             airline = Airline.objects.get(email = request.session['id'])
             oldpassword = request.POST.get('oldpassword')
             newpassword = request.POST.get('newpassword')
-            if airline.check_password(oldpassword):
+            newpassword1 = request.POST.get('newpassword1')
+            if airline.check_password(oldpassword) and newpassword == newpassword1:
                 airline.set_password(airline.make_password(newpassword))
                 airline.save()
-            else:
+                return redirect('/')
+            elif airline.check_password(oldpassword) == False:
                 messages.error(request,'Old Password Incorrect')
-            return redirect('/')
+            else:
+                messages.error(request, 'Confirmation password mismatch')
+            return redirect('/change_password')
     else:
         if request.session['type'] == 'passenger':
             return render(request,"air_rsv/change_password_user.html",{'base':'base_user.html'})
@@ -77,13 +86,14 @@ def change_password(request):
 
 def home(request):
     if 'id' in request.session.keys():
+        data = Airport.objects.all() # change this to relevant airports
         if request.session['type'] == 'passenger':
             passenger = Passenger.objects.get(email = request.session['id'])
-            context = {'object' : passenger,'base':'base_user.html'}
+            context = {'object' : passenger,'base':'base_user.html','data' : data}
             return render(request,'air_rsv/user_profile.html', context)
         elif request.session['type'] == 'airline':
             airline = Airline.objects.get(email=request.session['id'])
-            context = {'object': airline, 'base': 'base_airline.html'}
+            context = {'object': airline, 'base': 'base_airline.html','data' : data}
             return render(request,'air_rsv/user_profile.html',context)
     else:
         return render(request,"air_rsv/home.html")
@@ -106,7 +116,6 @@ def signup(request):
         lastname = request.POST['lastname']
         password = request.POST.get('password')
         usertype = request.POST.get('usertype')
-        print usertype
         phonenumber = request.POST.get('phonenumber')
         if usertype == 'passenger':
             user = Passenger(email = email,firstname=firstname,lastname=lastname, password = password, phonenumber = phonenumber)
@@ -139,7 +148,6 @@ def signup(request):
 
 @ensure_csrf_cookie
 def signin(request):
-
     if 'id' in request.session.keys():
         if request.session['type'] == 'passenger':
             passenger = Passenger.objects.get(email=request.session['id'])
@@ -153,18 +161,23 @@ def signin(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
-        try:
-            passenger = Passenger.objects.get(email=email)
-            if passenger.check_password(password):
-                request.session['id'] = email
-                request.session['type'] = 'passenger'
-                return redirect('/')
-            else:
-                messages.error(request,'Password Incorrect')
-                return redirect('/signin')
-        except:
+        usertype = request.POST.get('usertype')
+        if usertype == 'passenger':
             try:
-                airline = get_object_or_404(Airline, email=email)
+                passenger = Passenger.objects.get(email=email)
+                if passenger.check_password(password):
+                    request.session['id'] = email
+                    request.session['type'] = 'passenger'
+                    return redirect('/')
+                else:
+                    messages.error(request,'Password Incorrect')
+                    return redirect('/signin')
+            except:
+                messages.error(request,'No User is registered with this email')
+                return redirect('/signin')
+        elif usertype == 'airline':
+            try:
+                airline = Airline.objects.get(email=email)
                 if airline.check_password(password):
                     request.session['id'] = email
                     request.session['type'] = 'airline'
@@ -173,9 +186,8 @@ def signin(request):
                     messages.error(request,'Password Incorrect')
                     return redirect('/signin')
             except:
-                messages.error(request,'No Passenger or Airline is registered with this email')
+                messages.error(request,'No Airline is registered with this email')
                 return redirect('/signin')
-
     elif request.method == 'GET':
         return render(request,'air_rsv/signin.html')
 
@@ -265,7 +277,14 @@ def flight_search(request):
                                 if inter1.stop_rank < inter2.stop_rank:
                                     if inter1.stop_id.airport_id == sid.airport_id and inter2.stop_id.airport_id == did.airport_id:
                                         results_list.append((flg, inter1))
-            fdate_ob = datetime.strptime(fdate, '%Y-%m-%d').date()
+            try:
+                fdate_ob = datetime.strptime(fdate, '%Y-%m-%d').date()
+                if fdate_ob < datetime.date.today() :
+                    raise Exception('date error!')
+            except:
+                messages.error(request,'Enter a valid Date')
+                return redirect('/flight_search')
+
             final_results = []
             for res, inter_ob in results_list:
                 if (inter_ob == None):
@@ -289,7 +308,7 @@ def flight_search(request):
                     fare = int(ftotal_seats)*int(res.economy_classfare)
                 print fare
                 if (tmp >= ftotal_seats) :
-                    final_results.append((res, inter_ob, fclass,fare, fdate, Offers.objects.filter(flight_id = flgi0.flight_id))) # start and end time
+                    final_results.append((res, inter_ob, fclass, fare, fdate, Offers.objects.filter(flight_id = flgi0.flight_id))) # start and end time
             
             all_results[request.session['id']]=final_results
             return redirect('/show_flights')
@@ -353,7 +372,6 @@ def show_flights(request):
                 i = i + 1
     else:
         return render(request,'air_rsv/show_flights.html',{'final_results':final_results})
-
 
 @ensure_csrf_cookie
 def booking_conform(request):

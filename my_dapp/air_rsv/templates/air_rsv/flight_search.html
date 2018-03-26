@@ -6,6 +6,15 @@
       <div class="container">
          <span class="anchor" id="formComplex"></span>
          <hr class="my-5">
+         {% if messages %}
+
+                    {% for message in messages %}
+
+                       <div class="alert alert-primary" role="alert">
+                         <strong><!--{% if message.tags %} class="{{ message.tags }}"{% endif %}>-->{{ message }}</strong>
+                        </div>
+                    {% endfor %}
+        {% endif %}
          <h3>Flight Search </h3>
          <div class="row">
             <div class="col-5">
