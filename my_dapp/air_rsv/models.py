@@ -113,7 +113,6 @@ class Offers(models.Model):
 	discount = models.CharField(max_length = 2,default='0')
 	flight_id = models.ForeignKey(Flight,on_delete=models.CASCADE,default=None)
 
-
 # class ValidOffers(models.Model):
 # 	passenger_email = models.ForeignKey(Passenger,on_delete=models.CASCADE)
 # 	offer_id = models.ForeignKey(Offers,on_delete=models.CASCADE)
@@ -146,9 +145,12 @@ class Ticket(models.Model):
 	rating = models.CharField(max_length=1,default='')
 	status = models.CharField(validators=[status_regex],max_length=10,default='')
 	total_seats = models.CharField(max_length=2,default='')
+	source_id = models.ForeignKey(Airport,on_delete=models.CASCADE, related_name="source_id")
+	destination_id = models.ForeignKey(Airport,on_delete=models.CASCADE, related_name="destination_id")
 
-class RelevantAirports(models.Model):
-	email = models.ForeignKey(Passenger,on_delete=models.CASCADE)
-	airport_id = models.ForeignKey(Airport,on_delete=models.CASCADE)
-	class RelevantAirports_meta:
-		uniquetogether = ('email','airport_id')
+
+# class RelevantAirports(models.Model):
+# 	email = models.ForeignKey(Passenger,on_delete=models.CASCADE)
+# 	airport_id = models.ForeignKey(Airport,on_delete=models.CASCADE)
+# 	class RelevantAirports_meta:
+# 		uniquetogether = ('email','airport_id')

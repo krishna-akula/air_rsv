@@ -292,28 +292,27 @@ def flight_search(request):
                         if flg.sourceid.airport_id == sid.airport_id and flg.destinationid.airport_id  == did.airport_id:
                             t1 = datetime.combine(fdate_ob, datetime.strptime(flg.departure_time, '%H:%M').time())
                             t2 = datetime.combine(fdate_ob + timedelta(days=int(flg.daysoffset)), datetime.strptime(flg.arrival_time, '%H:%M').time())
-                            results_list.append((flg, None, int((t2 - t1).days) * 24 + (t2- t1).seconds/3600.0))
+                            results_list.append((flg, None, int((t2 - t1).days) * 24 + (t2- t1).seconds/3600.0,flg.sourceid ,flg.destinationid))
                         for inter in IntermediateStop.objects.filter(flight_id = flg.flight_id):
                             if flg.sourceid.airport_id == sid.airport_id and inter.stop_id.airport_id == did.airport_id:
                                 t1 = datetime.combine(fdate_ob, datetime.strptime(flg.departure_time, '%H:%M').time())
                             	t2 = datetime.combine(fdate_ob + timedelta(days=int(inter.daysoffset)), datetime.strptime(inter.arrival_time, '%H:%M').time())
-                                results_list.append((flg, None, int((t2 - t1).days) * 24 + (t2- t1).seconds/3600.0))  
+                                results_list.append((flg, None, int((t2 - t1).days) * 24 + (t2- t1).seconds/3600.0,flg.sourceid,inter.stop_id))  
                             if inter.stop_id.airport_id == sid.airport_id and flg.destinationid.airport_id  == did.airport_id:
                                 t1 = datetime.combine(fdate_ob, datetime.strptime(inter.departure_time, '%H:%M').time())
                             	t2 = datetime.combine(fdate_ob + timedelta(days=int(flg.daysoffset) - int(inter.daysoffset)), datetime.strptime(flg.arrival_time, '%H:%M').time())
-                                results_list.append((flg, None, int((t2 - t1).days) * 24 + (t2- t1).seconds/3600.0))  
-                                results_list.append((flg, inter))
+                                results_list.append((flg, inter, int((t2 - t1).days) * 24 + (t2- t1).seconds/3600.0,inter.stop_id,flg.destinationid))  
                         for inter1 in IntermediateStop.objects.filter(flight_id = flg.flight_id):
                             for inter2 in IntermediateStop.objects.filter(flight_id = flg.flight_id):
                                 if inter1.stop_rank < inter2.stop_rank:
                                     if inter1.stop_id.airport_id == sid.airport_id and inter2.stop_id.airport_id == did.airport_id:
                                         t1 = datetime.combine(fdate_ob, datetime.strptime(inter1.departure_time, '%H:%M').time())
                                         t2 = datetime.combine(fdate_ob + timedelta(days=int(inter2.daysoffset) - int(inter1.daysoffset)), datetime.strptime(inter2.arrival_time, '%H:%M').time())
-                                        results_list.append((flg, inter1, int((t2 - t1).days) * 24 + (t2- t1).seconds/3600.0))
+                                        results_list.append((flg, inter1, int((t2 - t1).days) * 24 + (t2- t1).seconds/3600.0,inter1.stop_id,inter2.stop_id))
             
 
             final_results = []
-            for res, inter_ob, tot in results_list:
+            for res, inter_ob, tot, sid, did in results_list:
                 if (inter_ob == None):
                     dod = fdate_ob
                 else:
@@ -332,7 +331,7 @@ def flight_search(request):
                 else :
                     tmp = flgi0.available_eseats
                     fare = int(ftotal_seats)*int(res.economy_classfare)
-                if (tmp >= ftotal_seats) :
+                if (int(tmp) >= int(ftotal_seats)) :
                     try:
                         go = Offers.objects.get(flight_id = flgi0.flight_id)
                         if (not(date.today() <= go.end_date and go.startdate <= date.today())):
@@ -340,7 +339,7 @@ def flight_search(request):
                     except:
                         go = None
                     
-                    final_results.append([res, inter_ob, fclass,fare, fdate, ftotal_seats,go,get_tot(tot)]) # start and end time            
+                    final_results.append([res, inter_ob, fclass,fare, fdate, ftotal_seats,go,get_tot(tot),sid,did]) # start and end time            
             all_results[request.session['id']]=final_results
             return redirect('/show_flights')
         if request.method == 'GET': 
@@ -416,10 +415,14 @@ def booking_conform(request):
         m = result[4]
         n = result[5]
         p = result[6]
+        # sourid = result[8]
+        # destid = result[9]
         s=i.flight_id+str(m)
         # generate unique ticketid
         #update_tid(ticket_id)
         passenger_email = Passenger.objects.get(email=request.session['id'])
+        # source_port = Airport.objects.get(airport_id = sourid)
+        # dest_port = Airport.objects.get(airport_id = destid)
         flight_id = i
         date_of_departure = m
         ftotal_seats = n
@@ -429,7 +432,7 @@ def booking_conform(request):
         available_eseats = int(flgi.available_eseats)
         s += flgi.available_bseats+flgi.available_eseats
         s = int(int(hashlib.sha1(s).hexdigest(), 16) % (10 ** 10))
-        ticketinstance = Ticket(ticket_id = str(s),passenger_email = passenger_email,flight_id = flight_id,date_of_departure = date_of_departure,flight_class = flight_class,total_seats = ftotal_seats)
+        ticketinstance = Ticket(ticket_id = str(s),passenger_email = passenger_email,flight_id = flight_id,date_of_departure = date_of_departure,flight_class = flight_class,total_seats = ftotal_seats,source_id = result[8],destination_id=result[9])
         ticketinstance.save()
         if(k == "business"):
             available_bseats = int(flgi.available_bseats) - (int(l)/int(i.business_classfare))
