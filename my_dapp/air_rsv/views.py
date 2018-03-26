@@ -18,6 +18,8 @@ from django.core.exceptions import ValidationError
 from models import *
 from django.db.models import Q
 from datetime import datetime, timedelta
+from django.db import transaction
+import hashlib
 
 tid = 1000000000
 
@@ -245,7 +247,7 @@ def flight_search(request):
             ffrom = request.POST.get('from')
             fto = request.POST.get('to')
             fdate = request.POST.get('date')
-            ftotal_seats = request.POST.get('total_seats')
+            ftotal_seats = int(request.POST.get('total_seats'))
             fclass = request.POST.get('class')
             results_list = []
             results_from = Airport.objects.filter(Q(airport_name__contains=ffrom) | Q(airport_city__contains=ffrom))
@@ -289,7 +291,11 @@ def flight_search(request):
                     fare = int(ftotal_seats)*int(res.economy_classfare)
                 print fare
                 if (tmp >= ftotal_seats) :
-                    final_results.append((res, inter_ob, fclass,fare, fdate, Offers.objects.filter(flight_id = flgi0.flight_id))) # start and end time
+                    try:
+                        go = Offers.objects.get(flight_id = flgi0.flight_id)
+                    except Offers.DoesNotExist:
+                        go = None
+                    final_results.append([res, inter_ob, fclass,fare, fdate, ftotal_seats,go]) # start and end time
             
             all_results[request.session['id']]=final_results
             return redirect('/show_flights')
@@ -304,8 +310,8 @@ def offeradd(request):
         offerid = request.POST['offerid']
         startdate = request.POST['startdate']
         enddate = request.POST['enddate']
-        description = request.POST['description']
-        offer = Offers(offer_id = offerid,	startdate = startdate,	end_date = enddate,	description = description,
+        discount = request.POST['discount']
+        offer = Offers(offer_id = offerid,	startdate = startdate,	end_date = enddate,	discount = discount,
 	                        flight_id = flightid)
         offer.save()
         return redirect('/')
@@ -345,7 +351,7 @@ def show_flights(request):
         i = 1
         final_results=all_results[request.session['id']]
         for fres in final_results:
-            if request.POST[('rb'+str(i))]==str(i):
+            if request.POST.get('rb','0')==str(i):
                 f_results[request.session['id']]=final_results[i-1]
                 # return render(request,'air_rsv/booking_conform.html',{"ticket_data":final_results[i-1]})
                 return redirect('/booking_conform')
@@ -356,6 +362,7 @@ def show_flights(request):
 
 
 @ensure_csrf_cookie
+@transaction.atomic
 def booking_conform(request):
     if request.method=="POST":
         result = f_results[request.session['id']]
@@ -365,17 +372,22 @@ def booking_conform(request):
         l = result[3]
         m = result[4]
         n = result[5]
-        ticket_id = tid+1
-        update_tid(ticket_id)
+        p = result[6]
+        s=i.flight_id+str(m)
+        # generate unique ticketid
+        #update_tid(ticket_id)
         passenger_email = Passenger.objects.get(email=request.session['id'])
         flight_id = i
         date_of_departure = m
+        ftotal_seats = n
         flight_class = k
-        ticketinstance = Ticket(ticket_id = ticket_id,passenger_email = passenger_email,flight_id = flight_id,date_of_departure = date_of_departure,flight_class = flight_class)
-        ticketinstance.save()
         flgi = Flight_instance.objects.get(flight_id = i, date_of_departure = m)
         available_bseats = int(flgi.available_bseats)
         available_eseats = int(flgi.available_eseats)
+        s += flgi.available_bseats+flgi.available_eseats
+        s = int(int(hashlib.sha1(s).hexdigest(), 16) % (10 ** 10))
+        ticketinstance = Ticket(ticket_id = str(s),passenger_email = passenger_email,flight_id = flight_id,date_of_departure = date_of_departure,flight_class = flight_class,total_seats = ftotal_seats)
+        ticketinstance.save()
         if(k == "business"):
             available_bseats = int(flgi.available_bseats) - (int(l)/int(i.business_classfare))
         else :
@@ -387,7 +399,11 @@ def booking_conform(request):
         all_results.clear()
         return redirect('/')
     else:
-        return render(request,'air_rsv/booking_conform.html',{"ticket_data": f_results[request.session['id']]})
+        data = f_results[request.session['id']]
+        # update data[3] if offers available
+        if data[6] :
+            data[3] = int(data[3]) - (int(data[3])*int(data[6].discount)/100) 
+        return render(request,'air_rsv/booking_conform.html',{"ticket_data": data})
         
 def booked_tickets(request):
     if 'id' in request.session.keys():
@@ -399,11 +415,25 @@ def booked_tickets(request):
     else:
         return redirect('/')
 
+@transaction.atomic
 def cancel_ticket(request):
     if request.method=="POST":
         ticketinstance=Ticket.objects.get(ticket_id=request.POST['ticket_id'])
+        flight_id = ticketinstance.flight_id.flight_id
+        fclass = ticketinstance.flight_class
+        ftotalseats = ticketinstance.total_seats
+        dod = ticketinstance.date_of_departure
+        flightinstance = Flight_instance.objects.get(flight_id = flight_id,date_of_departure = dod)
+        available_bseats = int(flightinstance.available_bseats)
+        available_eseats = int(flightinstance.available_eseats)
+        if(fclass == "business"):
+             available_bseats = int(flightinstance.available_bseats) + int(ftotalseats)
+        else:
+            available_eseats = int(flightinstance.available_eseats) + int(ftotalseats)
+        nflgi = Flight_instance(flight_id = flightinstance.flight_id, date_of_departure = dod, available_bseats = str(available_bseats), available_eseats = str(available_eseats))
+        flightinstance.delete()
+        nflgi.save()
         ticketinstance.delete()
-        # didn't update the available seats in corresponding flight instance 
         return redirect('/')
     else:
         return render(request,'air_rsv/cancel_ticket.html')

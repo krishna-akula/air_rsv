@@ -21,14 +21,15 @@
                      <th>Travel Time</th>
                      <th>Departure Time</th>
                      <th>Fare</th>
+                     <th>Available Offer</th>
                   </tr>
                </thead>
                <tbody>
-                  {% for i,j,k,l,m,n in final_results %}
+                  {% for i,j,k,l,m,n,p in final_results %}
                   <tr>
                      <td>
                         <label class="myradio">
-                        <input type="radio" name= "rb{{forloop.counter}}" value="{{forloop.counter}}" id="blankRadio1" onclick = "enable_book();" aria-label="..."> 
+                        <input type="radio" name= "rb" value="{{forloop.counter}}" onclick = "enable_book();" aria-label="..."> 
                         </label>
                      </td>
                      <td>{{i.airline_email.name}}</td>
@@ -39,6 +40,7 @@
                         <td>{{j.departure_time}} </td>
                      {% endif %}
                      <td>{{l}}</td>
+                     <td>{{p.discount}}</td>
                   </tr>
                   {% endfor %}
                </tbody>

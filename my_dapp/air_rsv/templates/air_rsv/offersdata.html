@@ -19,7 +19,7 @@
             <th>Flight ID</th>
             <th>Start Date</th>
             <th>End Date</th>
-            <th>Description</th>
+            <th>Discount</th>
           </tr>
         </thead>
         <tbody>
@@ -28,10 +28,10 @@
               {% for i in obj %}
                 <tr>
                   <td>{{ i.offer_id}}</td>
-                  <td>{{i.flight_id}}</td>
+                  <td>{{i.flight_id.flight_id}}</td>
                   <td>{{i.startdate}}</td>
                   <td>{{i.end_date}}</td>
-                  <td>{{i.description}}</td>
+                  <td>{{i.discount}}</td>
                 </tr>
               {% endfor %}
             {% endif %}
