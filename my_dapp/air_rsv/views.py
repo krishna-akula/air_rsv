@@ -217,16 +217,22 @@ def logout(request):
 def add_flight(request):
     if request.method=="POST":
         flightid = request.POST['flightid']
+        try:
+            temp = Flight.objects.get(flight_id = flightid)
+            messages.error(request, 'Flight ID already exists')
+            return redirect('/add_flight')
+        except Flight.DoesNotExist:
+            pass
         business_fare = request.POST['business_fare']
         economy_fare = request.POST['economy_fare']
         total_bseats = request.POST['total_bseats']
         total_eseats = request.POST['total_eseats']
-        airline_email = Airline.objects.get(email= request.POST['airline_id'])
         source_id = Airport.objects.get(airport_id=request.POST['source_id'])
         source_dep = request.POST['source_dep']
         destination_id = Airport.objects.get(airport_id=request.POST['destination_id'])
         destination_arr = request.POST['destination_arr']
         day_offset = request.POST['day_offset']
+        airline_email = Airline.objects.get(email = request.session['id'])
         intermediate_stops = request.POST['intermediate_stops']
         flight=Flight(flight_id = flightid,	business_classfare = business_fare,num_intermediate_stops = intermediate_stops,economy_classfare = economy_fare,	total_bseats =total_bseats ,total_eseats =total_eseats,
 	            airline_email = airline_email,	daysoffset = day_offset,sourceid = source_id,	destinationid = destination_id ,	departure_time = source_dep,arrival_time = destination_arr)
